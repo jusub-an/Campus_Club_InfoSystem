@@ -1,1 +1,3 @@
-# Campus_Club_InfoSystem
+# 정보시스템구축및관리
+
+< 캠퍼스 동아리 정보시스템 >
