@@ -47,7 +47,16 @@
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>${org.aspectj-version}</version>
-		</dependency>	
+		</dependency>
+		
+		<!-- [추가] Spring Security Crypto 라이브러리 -->
+	    <dependency>
+	        <groupId>org.springframework.security</groupId>
+	        <artifactId>spring-security-crypto</artifactId>
+	        <version>5.7.5</version> 
+	    </dependency>
+	    
+		<!-- [추가]파일업로드 관련 -->
 		<dependency>
 		    <groupId>commons-fileupload</groupId>
 		    <artifactId>commons-fileupload</artifactId>
