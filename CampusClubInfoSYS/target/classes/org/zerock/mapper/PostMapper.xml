@@ -79,52 +79,59 @@
     <sql id="criteria">
         <trim prefix="WHERE" prefixOverrides="AND|OR">
             <if test="post_type != null and post_type != ''">
-                post_type = #{post_type}
+                p.post_type = #{post_type}
             </if>
             
-            </trim>
+            <if test="club_id != null">
+                AND p.club_id = #{club_id}
+            </if>
+            
+            <if test="type != null and keyword != null and keyword != ''">
+            	AND (
+	                <foreach collection="typeArr" item="type" separator="OR">
+	                    <if test="type == 'T'.toString()">
+	                        p.title LIKE '%' || #{keyword} || '%'
+	                    </if>
+	                    <if test="type == 'C'.toString()">
+	                        p.content LIKE '%' || #{keyword} || '%'
+	                    </if>
+	                    <if test="type == 'A'.toString()">
+	                        p.author_email LIKE '%' || #{keyword} || '%'
+	                    </if>
+	                </foreach>
+                )
+            </if>
+        </trim>
     </sql>
     
     <select id="getListWithPaging" resultType="org.zerock.domain.PostVO">
         <![CDATA[
-        select post_id, club_id, author_email, title, content, created_date, post_type
-        from 
-        (
-            select /*+INDEX_DESC(post pk_post) */ 
-                   rownum rn, post_id, club_id, author_email, title, content, created_date, post_type
-            from post
+        SELECT post_id, club_id, author_email, title, content, created_date, post_type, reply_cnt -- ⭐️ (3) reply_cnt 추가
+        FROM (
+            SELECT a.*, rownum rn
+            FROM (
+                SELECT 
+                    p.post_id, p.club_id, p.author_email, p.title, p.content, p.created_date, p.post_type,
+                    NVL(r.cnt, 0) as reply_cnt  
+                FROM post p
+                LEFT JOIN (
+                    SELECT post_id, COUNT(*) as cnt
+                    FROM reply
+                    GROUP BY post_id
+                ) r ON p.post_id = r.post_id 
         ]]>
-        <where>
-            <if test="post_type != null and post_type != ''">
-                post_type = #{post_type}
-            </if>
-            
-            <if test="club_id != null">
-                AND club_id = #{club_id}
-            </if>
-            
-            <![CDATA[
-            AND rownum <= #{pageNum} * #{amount}
-            ]]>
-        </where>
         
-        <![CDATA[
+        <include refid="criteria"></include> <![CDATA[
+                ORDER BY p.created_date DESC -- p. 별칭 사용
+            ) a
+            WHERE rownum <= #{pageNum} * #{amount}
         )
-        where rn > (#{pageNum} - 1) * #{amount}
+        WHERE rn > (#{pageNum} - 1) * #{amount}
         ]]>
     </select>
+    
 	<select id="getTotalCount" resultType="int">
-    SELECT count(*) 
-    FROM post
-    <where>
-        <if test="post_type != null and post_type != ''">
-            post_type = #{post_type}
-        </if>
-        
-        <if test="club_id != null">
-            AND club_id = #{club_id}
-        </if>
-        
-        </where>
-</select>
+	    SELECT count(*) 
+	    FROM post p  <include refid="criteria"></include>
+	</select>
 </mapper>

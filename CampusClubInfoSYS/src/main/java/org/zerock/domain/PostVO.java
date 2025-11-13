@@ -16,4 +16,5 @@ public class PostVO {
 	private String post_type;
     private List<MultipartFile> uploadFiles;
     private List<FileVO> attachList;
+    private int reply_cnt;
 }

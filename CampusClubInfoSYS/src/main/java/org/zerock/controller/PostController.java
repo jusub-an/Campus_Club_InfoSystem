@@ -113,8 +113,16 @@ public class PostController {
 	}
 	
 	@GetMapping("/register")
-	public void register() {//void로 설정한것은 url로 입력한 register이름의 jsp파일을 찾아간다.
+	public void register(
+			@RequestParam("club_id") Long club_id, // ⭐️ [추가] list.jsp의 'regBtn'[cite: 74]이 넘겨주는 club_id
+			Model model) { // ⭐️ [추가] Model
 
+		// ⭐️ [추가] club_id로 clubInfo를 찾아 모델에 추가
+		ClubDTO clubInfo = clubService.getClub(club_id);
+		model.addAttribute("clubInfo", clubInfo);
+
+		// ⭐️ [추가] 폼(form)에서 club_id를 hidden으로 사용하기 위해 추가
+		model.addAttribute("club_id", club_id); 
 	}
 
 	 @GetMapping("/list")
@@ -125,6 +133,7 @@ public class PostController {
 		 ClubDTO clubInfo = clubService.getClub(club_id);
          if (clubInfo != null) {
              model.addAttribute("clubName", clubInfo.getClub_name());
+             model.addAttribute("clubInfo", clubInfo);
          } else {
              model.addAttribute("clubName", "알 수 없는 동아리");
          }
@@ -151,10 +160,24 @@ public class PostController {
 	public String register(HttpSession session, PostVO post, RedirectAttributes rttr) {
 
 		log.info("register: " + post);
-		Long club_id = (Long) session.getAttribute("club_id");
-		post.setClub_id(club_id);
+		// 1. 세션에서 로그인된 이메일 가져오기
+		String user_email = (String) session.getAttribute("user_email");
 		
-		post.setAuthor_email("test_1@test.com");
+		// 2. [추가] 비로그인 사용자가 등록을 시도할 경우 로그인 페이지로
+		if (user_email == null) {
+			log.warn("로그인하지 않은 사용자의 글쓰기 시도.");
+			rttr.addFlashAttribute("result", "auth_fail"); // 로그인 페이지에 알림 전달
+			return "redirect:/user/login"; // 로그인 페이지로 리다이렉트
+		}
+
+		// 3. 세션에서 club_id 가져오기
+		Long club_id = (Long) session.getAttribute("club_id");
+		
+		// 4. PostVO에 값 설정
+		post.setClub_id(club_id);
+		post.setAuthor_email(user_email); // 👈 "test_1@test.com" 대신 세션 값으로 변경
+		
+		// 5. 서비스 호출
 		service.register(post);
 
 		rttr.addFlashAttribute("result", post.getPost_id());
@@ -164,17 +187,31 @@ public class PostController {
 	}
 
 	@GetMapping("/get")
-	public void get(@RequestParam("post_id") Long post_id, Criteria cri, Model model) {
-	    log.info("/get");
+	public String get(@RequestParam("post_id") Long post_id, Criteria cri, Model model, HttpSession session, RedirectAttributes rttr) {
+		String user_email = (String) session.getAttribute("user_email");
+		if (user_email == null) {
+			log.warn("로그인하지 않은 사용자의 접근 시도: /post/get");
+			rttr.addFlashAttribute("result", "auth_fail"); // 로그인 페이지에 알림 전달
+			return "redirect:/user/login"; // 로그인 페이지로 리다이렉트
+		}
+		
+		log.info("/get");
 	    model.addAttribute("post", service.get(post_id));
 	    model.addAttribute("cri", cri); // cri 객체를 모델에 추가
+	    
+	    return "/post/get";
 	}
 	 
 	@GetMapping("/modify")
 	public void modify(@RequestParam("post_id") Long post_id, Criteria cri, Model model) {
 	    log.info("/modify");
+	    PostVO post = service.get(post_id);
 	    model.addAttribute("post", service.get(post_id));
 	    model.addAttribute("cri", cri); // cri 객체를 모델에 추가
+	    if(post != null) {
+			ClubDTO clubInfo = clubService.getClub(post.getClub_id());
+			model.addAttribute("clubInfo", clubInfo);
+		}
 	}
 	 
 //	 @PostMapping("/modify")
@@ -238,13 +275,19 @@ public class PostController {
 	 }
 
 	 @PostMapping("/remove")
-	 public String remove(@RequestParam("post_id") Long post_id, RedirectAttributes rttr)
+	 public String remove(@RequestParam("post_id") Long post_id, Criteria cri, @RequestParam("club_id") Long club_id,RedirectAttributes rttr)
 	 {
 		 log.info("remove..." + post_id);
 		 if (service.remove(post_id)) {
 			 rttr.addFlashAttribute("result", "success");
 		 }
-		 return "redirect:/post/list";
+         rttr.addAttribute("club_id", club_id); 
+         rttr.addAttribute("pageNum", cri.getPageNum());
+         rttr.addAttribute("amount", cri.getAmount());
+         rttr.addAttribute("type", cri.getType());
+         rttr.addAttribute("keyword", cri.getKeyword());
+         rttr.addAttribute("post_type", cri.getPost_type());
+         return "redirect:/post/list";
 	 }
 	
 	 @PostMapping("/deleteFile")

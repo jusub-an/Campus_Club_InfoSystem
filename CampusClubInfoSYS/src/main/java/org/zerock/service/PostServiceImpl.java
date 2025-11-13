@@ -2,7 +2,6 @@ package org.zerock.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.zerock.domain.FileVO; // 추가
 import org.zerock.domain.PostVO;
 import org.zerock.mapper.FileMapper; // 추가
 import org.zerock.mapper.PostMapper;
+import org.zerock.mapper.ReplyMapper;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -28,6 +28,9 @@ public class PostServiceImpl implements PostService {
 
     @Setter(onMethod_ = @Autowired)
     private PostMapper mapper;
+    
+    @Setter(onMethod_ = @Autowired)
+    private ReplyMapper replyMapper;
 
     // 1. FileMapper 주입
     @Setter(onMethod_ = @Autowired)
@@ -185,10 +188,12 @@ public class PostServiceImpl implements PostService {
 		
 		return modifyResult;
 	}
-
+    
+    @Transactional
 	@Override
 	public boolean remove(Long post_id) {
 		log.info("remove...." + post_id);
+//		replyMapper.deleteByPostId(post_id);
 		return mapper.delete(post_id) == 1;
 	}
 

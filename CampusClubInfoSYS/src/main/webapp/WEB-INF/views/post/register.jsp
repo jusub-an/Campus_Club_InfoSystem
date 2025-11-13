@@ -19,24 +19,32 @@
         <div class="form-group">
             <label>게시판 선택</label>
             <ul class="nav nav-tabs">
+           
+                <c:if test="${sessionScope.user_email == clubInfo.leader_email}">
+	                <li role="presentation">
+	                    <a href="#" data-role="allowed" data-value="공지">공지</a> </li>
+                </c:if>
+                
+                <li role="presentation" class="${sessionScope.user_email != clubInfo.leader_email ? 'active' : ''}"> 
+                	<a href="#" data-role="allowed" data-value="자유">자유</a> </li>
+                
+                <c:if test="${sessionScope.user_email == clubInfo.leader_email}">
+	                <li role="presentation">
+	                    <a href="#" data-role="allowed" data-value="활동앨범">활동앨범</a> </li>
+                </c:if>
+                
                 <li role="presentation">
-                    <a href="#" data-role="restricted" data-value="공지">공지</a>
-                </li>
-                <li role="presentation" class="active"> <a href="#" data-role="allowed" data-value="자유">자유</a>
-                </li>
-                <li role="presentation">
-                    <a href="#" data-role="allowed" data-value="활동앨범">활동앨범</a>
-                </li>
-                <li role="presentation">
-                    <a href="#" data-role="allowed" data-value="문의">문의</a>
-                </li>
+                    <a href="#" data-role="allowed" data-value="문의">문의</a> </li>
+     
             </ul>
         </div>
 
         <form role="form" id="registerForm" action="/post/register" method="post" enctype="multipart/form-data">
           
-          <input type="hidden" id="post_type_input" name="post_type" value="자유">
-
+          <input type="hidden" name="club_id" value="<c:out value='${club_id}'/>">
+          
+          <input type="hidden" id="post_type_input" name="post_type" 
+                 value="${sessionScope.user_email == clubInfo.leader_email ? '공지' : '자유'}"> ```
           <div class="form-group">
             <label>Title</label> <input class="form-control" name='title'>
           </div>

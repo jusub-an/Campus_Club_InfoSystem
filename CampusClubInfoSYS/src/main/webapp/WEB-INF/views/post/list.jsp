@@ -9,13 +9,19 @@
 		<h1 class="page-header"><c:out value="${clubName}" default="게시판 목록"/></h1>
 		<p>회원</p>
 		<p>
-			<a href="../application/apply?club_id=<c:out value="${pageMaker.cri.club_id}"/>"><button>동아리 가입 신청</button></a>
+			<c:if test="${not empty sessionScope.user_email and sessionScope.user_email != clubInfo.leader_email}">
+				<a href="../application/apply?club_id=<c:out value="${pageMaker.cri.club_id}"/>"><button>동아리 가입 신청</button></a>
+			</c:if>
 			
-			<a href="../application/list?club_id=<c:out value="${pageMaker.cri.club_id}"/>"><button>회원 관리</button></a> 
+			<c:if test="${sessionScope.user_email == clubInfo.leader_email}">
+				<a href="../application/list?club_id=<c:out value="${pageMaker.cri.club_id}"/>"><button>회원 관리</button></a> 
+			</c:if>
 		</p>
 		<p>동아리 관리</p>
 		<p>
-			<a href="../club/get?club_id=<c:out value="${pageMaker.cri.club_id}"/>"><button>정보 수정</button></a> 
+			<c:if test="${sessionScope.user_email == clubInfo.leader_email}">
+				<a href="../club/get?club_id=<c:out value="${pageMaker.cri.club_id}"/>"><button>정보 수정</button></a> 
+			</c:if>
 			<a href="../club/list"><button>동아리 목록으로 돌아가기</button></a>
 		</p>
 	</div>
@@ -64,7 +70,7 @@
 					<c:forEach items="${list}" var="post">
 					  <tr>
 					    <td><c:out value="${post.post_id}" /></td>
-					    <td><a class='move' href='<c:out value="${post.post_id}"/>'><c:out value="${post.title}"/></a></td>
+					    <td><a class='move' href='<c:out value="${post.post_id}"/>'><c:out value="${post.title}"/></a>&nbsp;<strong>[<c:out value="${post.reply_cnt}"/>]</strong></td>
 					    <td><c:out value="${post.club_id}" /></td>
 					    <td><c:out value="${post.author_email}" /></td>
 					    <td><fmt:formatDate pattern="yyyy-MM-dd" value="${post.created_date}" /></td>
@@ -72,6 +78,31 @@
 					  </tr>
 					</c:forEach>
 				</table>
+				
+				<div class='row'>
+					<div class="col-lg-12">
+						<form id="searchForm" action="/post/list" method='get'>
+							<select name='type'>
+								<option value="T" <c:out value="${pageMaker.cri.type == 'T' or pageMaker.cri.type == null ? 'selected' : ''}"/>>제목</option>
+								<option value="C" <c:out value="${pageMaker.cri.type == 'C' ? 'selected' : ''}"/>>내용</option>
+								<option value="A" <c:out value="${pageMaker.cri.type == 'A' ? 'selected' : ''}"/>>작성자</option>
+								<option value="TC" <c:out value="${pageMaker.cri.type == 'TC' ? 'selected' : ''}"/>>제목 or 내용</option>
+								<option value="TCA" <c:out value="${pageMaker.cri.type == 'TCA' ? 'selected' : ''}"/>>제목 or 내용 or 작성자</option>
+							</select>
+							<input type='text' name='keyword' value='<c:out value="${pageMaker.cri.keyword}"/>' />
+
+							<input type='hidden' name='pageNum' value='1'> <input type='hidden' name='amount' value='${pageMaker.cri.amount}'>
+							<input type='hidden' name='post_type' value='${pageMaker.cri.post_type}'>
+							<input type='hidden' name='club_id' value='${pageMaker.cri.club_id}'>
+
+							<button class='btn btn-default'>Search</button>
+						</form>
+					</div>
+				</div>
+				<div class='pull-right'>
+					<ul class="pagination">
+						</ul>
+				</div>
 
 				
 
@@ -205,6 +236,9 @@
 						$(".nav-tabs a").on("click", function(e) {
 							e.preventDefault(); // a 태그의 기본 이동을 막습니다.
 							
+							actionForm.find("input[name='post_id']").remove(); // '뒤로가기'로 남아있을 수 있는 post_id 제거
+						    actionForm.attr("action", "/post/list"); // action 속성을 강제로 /post/list로 복원
+							
 							// 클릭한 탭의 href 값("전체", "공지" 등)을 가져옵니다.
 							var postType = $(this).attr("href");
 							
@@ -229,6 +263,9 @@
 									e.preventDefault();
 
 									console.log('click');
+									
+									actionForm.find("input[name='post_id']").remove(); // '뒤로가기'로 남아있을 수 있는 post_id 제거
+						            actionForm.attr("action", "/post/list"); // action 속성을 강제로 /post/list로 복원
 
 									actionForm.find("input[name='pageNum']")
 											.val($(this).attr("href"));
@@ -254,30 +291,23 @@
 
 						var searchForm = $("#searchForm");
 
-						$("#searchForm button").on(
-								"click",
-								function(e) {
+						searchForm.on("submit", function(e) {
 
-									if (!searchForm.find("option:selected")
-											.val()) {
-										alert("검색종류를 선택하세요");
-										return false;
-									}
+							var type = searchForm.find("select[name='type']").val();
+							var keyword = searchForm.find("input[name='keyword']").val();
 
-									if (!searchForm.find(
-											"input[name='keyword']").val()) {
-										alert("키워드를 입력하세요");
-										return false;
-									}
+							
 
-									searchForm.find("input[name='pageNum']")
-											.val("1");
-									e.preventDefault();
+							if (keyword === '') {
+								alert("키워드를 입력하세요.");
+								searchForm.find("input[name='keyword']").focus();
+								return false;
+							}
 
-									searchForm.submit();
-
-								});
-
+							// pageNum, amount, post_type, club_id는
+							// 폼 내부에 hidden input으로 이미 포함되어 있음.
+							// 폼 전송 (e.preventDefault()가 없으므로 폼이 전송됨)
+						});
 					});
 </script>
 

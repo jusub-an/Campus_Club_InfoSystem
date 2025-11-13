@@ -30,20 +30,26 @@
 		     value='<c:out value="${post.post_id }"/>' readonly="readonly">
 		</div>
 		
+		<input type='hidden' name='club_id' value='<c:out value="${post.club_id }"/>'>
+		
 		<div class="form-group">
             <label>게시판 선택</label>
             <ul class="nav nav-tabs">
-                <li role="presentation" class="${post.post_type == '공지' ? 'active' : ''}">
-                    <a href="#" data-role="restricted" data-value="공지">공지</a>
+            
+            	<c:if test="${sessionScope.user_email == clubInfo.leader_email}">
+	                <li role="presentation" class="${post.post_type == '공지' ? 'active' : ''}"> <a href="#" data-role="allowed" data-value="공지">공지</a>
+	                </li>
+                </c:if>
+                
+                <li role="presentation" class="${post.post_type == '자유' ? 'active' : ''}"> <a href="#" data-role="allowed" data-value="자유">자유</a>
                 </li>
-                <li role="presentation" class="${post.post_type == '자유' ? 'active' : ''}">
-                    <a href="#" data-role="allowed" data-value="자유">자유</a>
-                </li>
-                <li role="presentation" class="${post.post_type == '활동앨범' ? 'active' : ''}">
-                    <a href="#" data-role="restricted" data-value="활동앨범">활동앨범</a>
-                </li>
-                <li role="presentation" class="${post.post_type == '문의' ? 'active' : ''}">
-                    <a href="#" data-role="allowed" data-value="문의">문의</a>
+                
+                <c:if test="${sessionScope.user_email == clubInfo.leader_email}">
+	                <li role="presentation" class="${post.post_type == '활동앨범' ? 'active' : ''}"> <a href="#" data-role="allowed" data-value="활동앨범">활동앨범</a>
+	                </li>
+                </c:if>
+                
+                <li role="presentation" class="${post.post_type == '문의' ? 'active' : ''}"> <a href="#" data-role="allowed" data-value="문의">문의</a>
                 </li>
             </ul>
         </div>
@@ -285,6 +291,7 @@ $(document).ready(function() {
                 var keywordTag = $("input[name='keyword']").clone();
                 var typeTag = $("input[name='type']").clone();    
                 var postTypeTag = $("input[name='post_type']").clone();
+                var clubIdTag = $("input[name='club_id']").clone();
                 
                 formObj.empty();
                 formObj.append(pageNumTag);
@@ -292,6 +299,7 @@ $(document).ready(function() {
                 formObj.append(keywordTag);
                 formObj.append(typeTag);
                 formObj.append(postTypeTag);
+                formObj.append(clubIdTag);
                 
                 formObj.submit();
             });
@@ -332,6 +340,7 @@ $(document).ready(function() {
                       var keywordTag = $("input[name='keyword']").clone();
                       var typeTag = $("input[name='type']").clone();    
                       var postTypeTag = $("input[name='post_type']").clone();
+                      var clubIdTag = $("input[name='club_id']").clone();
                       var resultTag = "<input type='hidden' name='result' value='success'>";
                       
                       formObj.empty();
@@ -340,6 +349,7 @@ $(document).ready(function() {
                       formObj.append(keywordTag);
                       formObj.append(typeTag);
                       formObj.append(postTypeTag);
+                      formObj.append(clubIdTag);
                       formObj.append(resultTag);
                       
                       formObj.submit();
