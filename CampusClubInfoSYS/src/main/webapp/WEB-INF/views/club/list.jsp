@@ -18,7 +18,7 @@
 
 <table border="1">
     <tr>
-        <th>ID</th>
+        <th>로고</th>
         <th>이름</th>
         <th>카테고리</th>
         <th>회장 이메일</th>
@@ -27,7 +27,15 @@
 
     <c:forEach var="club" items="${list}">
         <tr>
-            <td>${club.club_id}</td>
+            <td>
+                <c:if test="${not empty club.logo_url}">
+                    <img src="<c:url value='${club.logo_url}' />" 
+                         alt="${club.club_name} 로고" width="50" height="50" />
+                </c:if>
+                <c:if test="${empty club.logo_url}">
+                    (이미지 없음)
+                </c:if>
+            </td>
             <td><a href="/post/list?club_id=${club.club_id}">${club.club_name}</a></td>
             <td>${club.category}</td>
             <td>${club.leader_email}</td>
