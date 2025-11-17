@@ -13,7 +13,9 @@
 <body>
 <h2>동아리 목록</h2>
 
-<a href="/club/register">새 동아리 등록</a>
+<c:if test="${sessionScope.user_type_code eq 'MGR'}">
+    <a href="/club/register">새 동아리 등록</a>
+</c:if>
 <br><br>
 
 <table border="1">
