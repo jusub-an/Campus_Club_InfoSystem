@@ -107,6 +107,7 @@ public class UserController {
         
         // 세션(Session)에 로그인 사용자 정보 저장
         session.setAttribute("user_email", loginUser.getUser_email());
+        session.setAttribute("user_type_code", loginUser.getUser_type_code());
         
         return "redirect:/"; // 게시판 목록 페이지로 리다이렉트
     }

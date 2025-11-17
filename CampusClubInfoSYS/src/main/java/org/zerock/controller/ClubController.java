@@ -28,12 +28,26 @@ public class ClubController {
 	
 	// 등록 페이지 이동 	
 	@GetMapping("/register") 
-	public String register(HttpSession session) {
-		if (session.getAttribute("user_email") == null) {
-			return "user/login";
-		}
-		return "club/register";
-	} 
+	public String register(HttpSession session, RedirectAttributes rttr) {
+
+	    String loginEmail = (String) session.getAttribute("user_email");
+	    String userType   = (String) session.getAttribute("user_type_code");
+
+	    // 1. 로그인 안 되어 있으면 로그인 페이지로
+	    if (loginEmail == null) {
+	        rttr.addFlashAttribute("msg", "로그인 후 이용 가능합니다.");
+	        return "redirect:/user/login";
+	    }
+
+	    // 2. MGR이 아니면 접근 불가
+	    if (userType == null || !userType.equals("MGR")) {
+	        rttr.addFlashAttribute("msg", "동아리 등록 권한이 없습니다.");
+	        return "redirect:/club/list";
+	    }
+
+	    // 3. MGR이면 등록 페이지로
+	    return "club/register";
+	}
 	
 	// 동아리 목록 페이지 
 	@GetMapping("/list") 
@@ -47,6 +61,13 @@ public class ClubController {
 	public String register(ClubDTO club, 
 			@RequestParam("logo_file") MultipartFile logoFile, 
 			RedirectAttributes rttr, HttpSession session) {
+		
+		String userType = (String) session.getAttribute("user_type_code");
+	    if (userType == null || !userType.equals("MGR")) {
+	        rttr.addFlashAttribute("msg", "동아리 등록 권한이 없습니다.");
+	        return "redirect:/club/list";
+	    }
+	    
 		// 동아리장 이메일 추가
 		club.setLeader_email((String) session.getAttribute("user_email"));
 				
