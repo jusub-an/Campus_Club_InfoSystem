@@ -44,4 +44,9 @@
     	SELECT * FROM club WHERE leader_email = #{leader_email}
 	</select>
 	
+	<!-- 이 이메일로 이미 등록했는지 확인 -->
+	<select id="countByLeaderEmail" parameterType="string" resultType="int">
+    	SELECT COUNT(*) FROM club WHERE leader_email = #{leader_email}
+	</select>
+	
 </mapper>

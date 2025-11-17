@@ -31,6 +31,12 @@
                         </div>
                     </c:if>
                 </c:if>
+                
+                <c:if test="${not empty msg}">
+    				<div class="alert alert-warning">
+        				${msg}
+    				</div>
+				</c:if>
 
                 <form role="form" action="/user/login" method="post">
                     <div class="form-group">

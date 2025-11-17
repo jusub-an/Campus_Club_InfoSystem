@@ -12,10 +12,28 @@
 </head>
 <body>
 <h2>동아리 목록</h2>
+<c:if test="${not empty msg}">
+    <script>
+        alert('${msg}');
+    </script>
+</c:if>
 
 <c:if test="${sessionScope.user_type_code eq 'MGR'}">
-    <a href="/club/register">새 동아리 등록</a>
+    <c:choose>
+        <c:when test="${hasClub}">
+            <span style="color: gray;">
+                이미 하나의 동아리를 등록하였습니다.
+            </span>
+        </c:when>
+
+        <c:otherwise>
+            <a href="/club/register" class="btn btn-primary">
+                새 동아리 등록
+            </a>
+        </c:otherwise>
+    </c:choose>
 </c:if>
+
 <br><br>
 
 <table border="1">

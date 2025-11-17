@@ -45,16 +45,35 @@ public class ClubController {
 	        return "redirect:/club/list";
 	    }
 
-	    // 3. MGR이면 등록 페이지로
+	    // 3. 이미 하나 등록한 경우 막기
+	    if (service.hasClub(loginEmail)) {
+	        rttr.addFlashAttribute("msg", "이미 하나의 동아리를 등록하였습니다.");
+	        return "redirect:/club/list";
+	    }
+	    // 4. MGR이고 아직 동아리 없으면 등록 페이지로
 	    return "club/register";
 	}
 	
+	/*
 	// 동아리 목록 페이지 
 	@GetMapping("/list") 
 	public void list(Model model) {
 		log.info("club list");
 		model.addAttribute("list", service.getClubList()); 
 	} 
+	*/
+	// 동아리 목록 페이지 
+	@GetMapping("/list") 
+	public void list(Model model, HttpSession session) {
+	    log.info("club list");
+	    model.addAttribute("list", service.getClubList()); 
+
+	    String email = (String) session.getAttribute("user_email");
+	    if (email != null) {
+	        boolean hasClub = service.hasClub(email);
+	        model.addAttribute("hasClub", hasClub);
+	    }
+	}
 	
 	// 동아리 등록 처리 
 	@PostMapping("/register") 
@@ -63,8 +82,16 @@ public class ClubController {
 			RedirectAttributes rttr, HttpSession session) {
 		
 		String userType = (String) session.getAttribute("user_type_code");
-	    if (userType == null || !userType.equals("MGR")) {
+		String email    = (String) session.getAttribute("user_email");
+		
+		if (userType == null || !userType.equals("MGR")) {
 	        rttr.addFlashAttribute("msg", "동아리 등록 권한이 없습니다.");
+	        return "redirect:/club/list";
+	    }
+	    
+	    // 이미 하나 등록한 경우
+	    if (service.hasClub(email)) {
+	        rttr.addFlashAttribute("msg", "이미 하나의 동아리를 등록하였습니다.");
 	        return "redirect:/club/list";
 	    }
 	    

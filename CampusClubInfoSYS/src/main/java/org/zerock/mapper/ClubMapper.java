@@ -10,5 +10,6 @@ public interface ClubMapper {
     int insert(ClubDTO dto);
     int update(ClubDTO dto);
     int delete(Long club_id);
+    int countByLeaderEmail(String leader_email);
     List<ClubDTO> getListByLeader(String leader_email);
 }

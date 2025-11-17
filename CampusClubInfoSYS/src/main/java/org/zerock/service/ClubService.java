@@ -18,4 +18,6 @@ public interface ClubService {
 	public boolean deleteClub(Long club_id); 
 	// 회장 이메일로 동아리 조회
 	public List<ClubDTO> getClubsByLeader(String leader_email);
+	// 이 이메일로 이미 동아리 등록한 적 있는지
+	public boolean hasClub(String leaderEmail);
 }

@@ -54,5 +54,10 @@ public class ClubServiceImpl implements ClubService {
 		log.info("getClubsByLeader......" + leader_email);
 		return mapper.getListByLeader(leader_email);
 	}
+	
+	@Override
+    public boolean hasClub(String leaderEmail) {
+        return mapper.countByLeaderEmail(leaderEmail) > 0;
+    }
 
 }
