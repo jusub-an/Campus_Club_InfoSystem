@@ -19,4 +19,8 @@ public interface ClubMapper {
     
     // 전체 목록 (검색어 없을 때)
     List<ClubDTO> findAll();
+    
+    // 이름 + 카테고리 조건 검색
+    List<ClubDTO> searchByCondition(@Param("keyword") String keyword,
+                                    @Param("category") String category);
 }
