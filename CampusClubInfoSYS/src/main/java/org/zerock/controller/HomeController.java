@@ -3,6 +3,9 @@ package org.zerock.controller;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+// 배열을 사용하기 위한 임포트
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -37,6 +40,12 @@ public class HomeController {
 		model.addAttribute("serverTime", formattedDate );
 		
 		model.addAttribute("loginUser", session.getAttribute("user_email"));
+		
+		// 동아리 카테고리 목록(화면에서 버튼으로 사용)
+        List<String> categoryList = Arrays.asList(
+                "전체", "공연·예술", "체육·레저", "학술·전공", "사회·봉사", "문화·교류", "창업·취업·자기계발", "취미·창작", "종교·인문", "기타"
+        );
+        model.addAttribute("categories", categoryList);
 		
 		return "home";
 	}
