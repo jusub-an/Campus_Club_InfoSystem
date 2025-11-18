@@ -9,8 +9,8 @@
 	</select>
     
 	<insert id="insert">
-		INSERT INTO Application (club_id, applicant_email, status, applied_at)
-		VALUES (#{club_id}, #{applicant_email}, #{status}, #{applied_at})
+		INSERT INTO Application (club_id, applicant_email, applicant_text, applied_at)
+		VALUES (#{club_id}, #{applicant_email}, #{applicant_text}, #{applied_at})
 	</insert>
 	
 	<select id="getMemberEmailByClubId" resultType="java.lang.String">

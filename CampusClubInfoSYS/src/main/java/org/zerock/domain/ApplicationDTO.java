@@ -9,6 +9,6 @@ public class ApplicationDTO {
     private Long app_id;
     private Long club_id;
     private String applicant_email;
-    private String status;
+    private String applicant_text;
     private Date applied_at;
 }

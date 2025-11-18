@@ -103,10 +103,13 @@ public class ApplicationController {
     }	
     
     @PostMapping("/apply")
-    public String apply(HttpSession session, ApplicationDTO dto, RedirectAttributes rttr) {
+    public String apply(HttpSession session, ApplicationDTO dto,
+    		@RequestParam("applicant_text") String applicant_text,
+    		RedirectAttributes rttr) {
         Date now = new Date();
         dto.setApplied_at(now);
-        dto.setStatus("대기"); // DB에서 제거할 속성
+        dto.setApplicant_text(applicant_text);
+        log.info(applicant_text);
         dto.setApplicant_email((String) session.getAttribute("user_email"));
         Long club_id = dto.getClub_id();
         // Service의 반환 값(boolean)으로 중복 여부 확인

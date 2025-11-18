@@ -53,7 +53,7 @@
     <select id="searchByName" resultType="org.zerock.domain.ClubDTO">
         SELECT *
         FROM club
-        WHERE club_name LIKE '%' || #{keyword} || '%'
+        WHERE club_name LIKE #{keyword}
         ORDER BY club_id DESC
     </select>
 	

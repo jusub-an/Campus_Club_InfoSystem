@@ -49,4 +49,12 @@
     	SELECT COUNT(*) FROM club WHERE leader_email = #{leader_email}
 	</select>
 	
+	<!-- 동아리 이름으로 검색 -->
+    <select id="searchByName" resultType="org.zerock.domain.ClubDTO">
+        SELECT *
+        FROM club
+        WHERE club_name LIKE #{keyword}
+        ORDER BY club_id DESC
+    </select>
+	
 </mapper>

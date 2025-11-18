@@ -19,6 +19,7 @@
 				<thead class="thead-dark">
 					<tr>
 						<th>신청자 이메일</th>
+						<th>지원글</th>
 						<th>신청일</th>
 						<th>상태</th>
 					</tr>
@@ -27,6 +28,7 @@
 					<c:forEach items="${a_list}" var="app">
 						<tr>
 							<td><c:out value="${app.applicant_email}" /></td>
+							<td><c:out value="${app.applicant_text}" /></td>
 							<td><fmt:formatDate pattern="yyyy-MM-dd" value="${app.applied_at}" /></td>
 							<td>
 							    <%-- 1. 승인(O) 폼: POST 요청으로 club_id를 전달 --%>

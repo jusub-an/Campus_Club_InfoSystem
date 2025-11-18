@@ -22,6 +22,7 @@
 	<c:otherwise>
 		<form action="/application/apply" method="post">
 			<input type="hidden" name="club_id" value="<c:out value="${club_id}"/>">
+			<input type="text" name="applicant_text">
 			<button type="submit">가입하기</button>
 		</form>
 	</c:otherwise>
