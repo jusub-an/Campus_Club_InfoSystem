@@ -20,4 +20,7 @@ public interface ClubService {
 	public List<ClubDTO> getClubsByLeader(String leader_email);
 	// 이 이메일로 이미 동아리 등록한 적 있는지
 	public boolean hasClub(String leaderEmail);
+	
+	// 동아리 이름 검색
+	public List<ClubDTO> searchClubsByName(String keyword);
 }

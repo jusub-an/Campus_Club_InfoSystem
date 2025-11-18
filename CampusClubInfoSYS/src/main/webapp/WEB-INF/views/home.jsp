@@ -7,9 +7,9 @@
 	<title>HomePage</title>
 </head>
 <body>
-<h1>
-	캠퍼스 동아리 정보시스템 
-</h1>
+<h1> 캠퍼스 동아리 정보시스템 </h1>
+
+<!-- 상단 로그인 / 로그아웃 영역 -->
 <div class="top-area">
     <c:choose>
         <%-- 1. loginUser가 null이 아닐 때 (로그인 상태) --%>
@@ -35,7 +35,7 @@
     </c:choose>
 </div>
 
-<!-- 동아리명 검색창 (상단) -->
+<!-- 동아리명 검색창 -->
 <div class="search-box">
     <%-- GET / (HomeController) 로 검색 요청 --%>
     <form method="get" action="${pageContext.request.contextPath}/">
@@ -75,6 +75,42 @@
             <button>동아리 목록 페이지</button>
         </a>
     </p>
+</div>
+
+<hr>
+
+<!-- 검색 결과 영역 -->
+<div class="result-section">
+    <h2>검색 결과</h2>
+
+    <c:if test="${empty clubList}">
+        <p>검색된 동아리가 없습니다.</p>
+    </c:if>
+
+    <c:if test="${!empty clubList}">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>동아리명</th>
+                    <th>카테고리</th>
+                    <th>소개</th>
+                    <th>대표자 이메일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="club" items="${clubList}">
+                    <tr>
+                        <td>${club.club_id}</td>
+                    	<td>${club.club_name}</td>
+                    	<td>${club.category}</td>
+                    	<td>${club.description}</td>
+                    	<td>${club.leader_email}</td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+    </c:if>
 </div>
 
 <P>  현재 시간: ${serverTime}. </P>

@@ -59,5 +59,18 @@ public class ClubServiceImpl implements ClubService {
     public boolean hasClub(String leaderEmail) {
         return mapper.countByLeaderEmail(leaderEmail) > 0;
     }
+	
+	@Override
+	public List<ClubDTO> searchClubsByName(String keyword) {
+		log.info("searchClubsByName......" + keyword);
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // 검색어 없으면 전체 목록
+            return mapper.getList();
+        }
+
+        // 검색어 있으면 이름으로 검색
+        return mapper.searchByName(keyword.trim());
+	}
 
 }
