@@ -69,6 +69,7 @@
     </form>
 </div>
 
+<!-- 기타 메뉴 -->
 <div class="menu-area">
     <p>
         <a href="club/list">

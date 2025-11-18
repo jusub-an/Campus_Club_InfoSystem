@@ -56,5 +56,23 @@
         WHERE club_name LIKE '%' || #{keyword} || '%'
         ORDER BY club_id DESC
     </select>
+    
+    <!-- 이름 + 카테고리 동시 검색 -->
+    <select id="searchByCondition" resultType="org.zerock.domain.ClubDTO">
+        SELECT *
+        FROM club
+        <where>
+            <!-- 이름 검색 -->
+            <if test="keyword != null and keyword != ''">
+                AND club_name LIKE '%' || #{keyword} || '%'
+            </if>
+
+            <!-- 카테고리 검색 -->
+            <if test="category != null and category != '' and category != '전체'">
+                AND category = #{category}
+            </if>
+        </where>
+        ORDER BY club_id DESC
+    </select>
 	
 </mapper>

@@ -73,4 +73,22 @@ public class ClubServiceImpl implements ClubService {
         return mapper.searchByName(keyword.trim());
 	}
 
+	@Override
+	public List<ClubDTO> searchClubs(String keyword, String category) {
+		log.info("searchClubs...... keyword=" + keyword + ", category=" + category);
+
+        // 둘 다 비었으면 전체 목록
+        boolean noKeyword  = (keyword == null  || keyword.trim().isEmpty());
+        boolean noCategory = (category == null || category.trim().isEmpty() || "전체".equals(category));
+
+        if (noKeyword && noCategory) {
+            return mapper.getList();
+        }
+
+        return mapper.searchByCondition(
+                noKeyword  ? null : keyword.trim(),
+                noCategory ? null : category
+        );
+	}
+
 }

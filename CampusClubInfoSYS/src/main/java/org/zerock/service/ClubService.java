@@ -23,4 +23,6 @@ public interface ClubService {
 	
 	// 동아리 이름 검색
 	public List<ClubDTO> searchClubsByName(String keyword);
+	// 이름 + 카테고리로 검색
+    List<ClubDTO> searchClubs(String keyword, String category);
 }
