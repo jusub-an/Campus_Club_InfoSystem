@@ -42,7 +42,6 @@
         <th>이름</th>
         <th>카테고리</th>
         <th>회장 이메일</th>
-        <th>관리</th>
     </tr>
 
     <c:forEach var="club" items="${list}">
@@ -59,12 +58,6 @@
             <td><a href="/post/list?club_id=${club.club_id}">${club.club_name}</a></td>
             <td>${club.category}</td>
             <td>${club.leader_email}</td>
-            <td>
-                <form action="/club/remove" method="post">
-                    <input type="hidden" name="club_id" value="${club.club_id}" />
-                    <input type="submit" value="삭제" />
-                </form>
-            </td>
         </tr>
     </c:forEach>
 </table>

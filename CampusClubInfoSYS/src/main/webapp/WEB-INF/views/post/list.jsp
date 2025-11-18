@@ -21,7 +21,12 @@
 		<p>
 			<c:if test="${sessionScope.user_email == clubInfo.leader_email}">
 				<a href="../club/get?club_id=<c:out value="${pageMaker.cri.club_id}"/>"><button>정보 수정</button></a> 
+				<form action="../club/remove" method="post" style="display:inline;" onsubmit="return confirm('정말 이 동아리를 삭제하시겠습니까?');">
+            		<input type="hidden" name="club_id" value="<c:out value='${pageMaker.cri.club_id}'/>" />
+            		<button type="submit">동아리 삭제</button>
+        		</form>
 			</c:if>
+
 			<a href="../club/list"><button>동아리 목록으로 돌아가기</button></a>
 		</p>
 	</div>
