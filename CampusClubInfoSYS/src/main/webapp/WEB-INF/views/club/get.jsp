@@ -3,50 +3,87 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
-	<title>동아리 상세보기</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<title>동아리 상세보기 및 수정</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h2>동아리 상세정보</h2>
 
-<form action="/club/modify" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="club_id" value="${club.club_id}" />
+<div class="container my-5">
 
-    이름: <input type="text" name="club_name" value="${club.club_name}" /><br>
-    카테고리: <br>
-    <div style="padding-left: 10px;">
-        <input type="radio" name="category" value="공연·예술" 
-            <c:if test="${club.category == '공연·예술'}">checked</c:if>> 🎭 1. 공연·예술<br>
-        <input type="radio" name="category" value="체육·레저"
-            <c:if test="${club.category == '체육·레저'}">checked</c:if>> ⚽ 2. 체육·레저<br>
-        <input type="radio" name="category" value="학술·전공"
-            <c:if test="${club.category == '학술·전공'}">checked</c:if>> 💻 3. 학술·전공<br>
-        <input type="radio" name="category" value="사회·봉사"
-            <c:if test="${club.category == '사회·봉사'}">checked</c:if>> 💬 4. 사회·봉사<br>
-        <input type="radio" name="category" value="문화·교류"
-            <c:if test="${club.category == '문화·교류'}">checked</c:if>> 🌏 5. 문화·교류<br>
-        <input type="radio" name="category" value="창업·취업·자기계발"
-            <c:if test="${club.category == '창업·취업·자기계발'}">checked</c:if>> 💡 6. 창업·취업·자기계발<br>
-        <input type="radio" name="category" value="취미·창작"
-            <c:if test="${club.category == '취미·창작'}">checked</c:if>> 🕹️ 7. 취미·창작<br>
-        <input type="radio" name="category" value="종교·인문"
-            <c:if test="${club.category == '종교·인문'}">checked</c:if>> 🪩 8. 종교·인문<br>
-        <input type="radio" name="category" value="기타"
-            <c:if test="${club.category == '기타'}">checked</c:if>> 🧑‍🤝‍🧑 9. 기타<br>
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-5 text-primary">동아리 상세정보 및 수정</h2>
+        </div>
     </div>
-    <br>
-    로고 이미지: <input type="file" name="logo_file" value="${club.logo_url}" /><br>
-    한줄 설명: <input type="text" name="description" value="${club.description}" /><br>
-    소개글: <textarea name="introduction" rows="4" cols="40">${club.introduction}</textarea><br>
 
-    <input type="submit" value="수정" />
-</form>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5 class="mb-0">동아리 정보 수정: ${club.club_name}</h5>
+                </div>
+                <div class="card-body">
+                    
+                    <form action="/club/modify" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="club_id" value="${club.club_id}" />
 
-<a href="../post/list?club_id=<c:out value="${club_id}"/>">취소</a>
+                        <div class="mb-3">
+                            <label for="club_name" class="form-label">이름</label>
+                            <input type="text" class="form-control" id="club_name" name="club_name" value="${club.club_name}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label d-block">카테고리</label>
+                            <div class="row g-2 p-2 border rounded">
+                                <c:set var="categories" value="공연·예술|체육·레저|학술·전공|사회·봉사|문화·교류|창업·취업·자기계발|취미·창작|종교·인문|기타" />
+                                <c:set var="emojis" value="🎭|⚽|💻|💬|🌏|💡|🕹️|🪩|🧑‍🤝‍🧑" />
+                                <c:forEach var="catName" items="${fn:split(categories, '|')}" varStatus="status">
+                                    <c:set var="emoji" value="${fn:split(emojis, '|')[status.index]}" />
+                                    <div class="col-md-4 col-sm-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="category" 
+                                                id="category${status.index + 1}" value="${catName}" 
+                                                <c:if test="${club.category == catName}">checked</c:if>>
+                                            <label class="form-check-label" for="category${status.index + 1}">
+                                                ${emoji} ${status.index + 1}. ${catName}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="logo_file" class="form-label">로고 이미지 (현재: ${club.logo_url})</label>
+                            <input type="file" class="form-control" id="logo_file" name="logo_file">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">한줄 설명</label>
+                            <input type="text" class="form-control" id="description" name="description" value="${club.description}" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="introduction" class="form-label">소개글</label>
+                            <textarea class="form-control" id="introduction" name="introduction" rows="4" required>${club.introduction}</textarea>
+                        </div>
 
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <button type="submit" class="btn btn-primary btn-lg">수정하기</button>
+                            <a href="../post/list?club_id=<c:out value="${club_id}"/>" class="btn btn-secondary btn-lg">취소</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
