@@ -14,7 +14,7 @@
 
     <h2 class="mb-4 text-primary">동아리 관리 페이지</h2>
 
-	[cite_start]<h3 class="mt-4 mb-3">가입신청자 목록</h3> [cite: 73]
+	<h3 class="mt-4 mb-3">가입신청자 목록</h3>
 	<c:choose>
 		<c:when test="${not empty a_list}">
 			<table class="table table-striped table-bordered">
@@ -38,7 +38,7 @@
     							    <form action="/application/approve" method="post" class="d-inline">
     							        <input type="hidden" name="app_id" value="${app.app_id}">
     							        <input type="hidden" name="club_id" value="${app.club_id}">
-    							        [cite_start]<input type="hidden" name="applicant_email" value="${app.applicant_email}"> [cite: 74]
+    							        <input type="hidden" name="applicant_email" value="${app.applicant_email}">
     							        <button type="submit" class="btn btn-success btn-sm">승인 (O)</button>
     							    </form>
     							    
@@ -57,12 +57,12 @@
 		</c:when>
 		<c:otherwise>
 			<div class="alert alert-info" role="alert">
-				[cite_start]가입 신청이 없습니다. [cite: 75]
+				가입 신청이 없습니다.
 			</div>
 		</c:otherwise>
 	</c:choose>
 	
-	[cite_start]<h3 class="mt-5 mb-3">회원 목록</h3> [cite: 75]
+	<h3 class="mt-5 mb-3">회원 목록</h3> 
 	<c:choose>
 		<c:when test="${not empty m_list}">
 			<table class="table table-striped table-bordered">
@@ -81,12 +81,12 @@
 							<td class="text-center">
                                 <form action="/application/expel" method="post" class="d-inline">
                                     <input type="hidden" name="club_id" value="${mem.club_id}">
-                                    [cite_start]<input type="hidden" name="user_email" value="${mem.user_email}"> [cite: 76]
-                                    [cite_start]<input type="hidden" name="club_id" value="<c:out value="${club_id}"/>"> [cite: 76]
+                                    <input type="hidden" name="user_email" value="${mem.user_email}">
+                                    <input type="hidden" name="club_id" value="<c:out value="${club_id}"/>"> 
                                     <button type="submit" class="btn btn-warning btn-sm" 
-                                            [cite_start]onclick="return confirm('${mem.user_email} 회원을 추방하시겠습니까?');">추방</button> [cite: 77]
+                                            onclick="return confirm('${mem.user_email} 회원을 추방하시겠습니까?');">추방</button>
                                 </form>
-                            [cite_start]</td> [cite: 78]
+                            </td>
 						</tr>
 					</c:forEach>
 				</tbody>
@@ -94,7 +94,7 @@
 		</c:when>
 		<c:otherwise>
 			<div class="alert alert-info" role="alert">
-				[cite_start]회원이 없습니다. [cite: 79]
+				회원이 없습니다.
 			</div>
 		</c:otherwise>
 	</c:choose>

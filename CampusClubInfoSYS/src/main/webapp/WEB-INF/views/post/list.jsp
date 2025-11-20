@@ -26,16 +26,13 @@
 <div class="container my-5">
 
     <h1 class="text-center mb-4 text-primary">
-        <i class="bi bi-journal-text me-2"></i>
-        <c:out value="${clubName}" default="게시판 목록"/>
+    	<c:out value="${clubName}" default="게시판 목록"/>
     </h1>
     
     <div class="row mb-4">
         <div class="col-lg-12">
             <div class="card shadow-sm p-3 mb-3">
                 <div class="d-flex flex-wrap gap-3 align-items-center">
-                    
-                    <strong class="me-3">회원 기능:</strong>
                     <c:if test="${not empty sessionScope.user_email and sessionScope.user_email != clubInfo.leader_email}">
                         <a href="../application/apply?club_id=<c:out value="${pageMaker.cri.club_id}"/>" class="btn btn-sm btn-outline-success">
                             <i class="bi bi-person-plus-fill me-1"></i> 동아리 가입 신청
@@ -48,7 +45,6 @@
                         </a>
                     </c:if>
                     
-                    <strong class="ms-md-4 me-3">동아리 관리:</strong>
                     <c:if test="${sessionScope.user_email == clubInfo.leader_email}">
                         <a href="../club/get?club_id=<c:out value="${pageMaker.cri.club_id}"/>" class="btn btn-sm btn-info text-white">
                             <i class="bi bi-pencil-square me-1"></i> 정보 수정

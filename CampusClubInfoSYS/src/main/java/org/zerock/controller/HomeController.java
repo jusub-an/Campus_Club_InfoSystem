@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.service.ClubService;
 import org.zerock.domain.ClubDTO;
 
@@ -37,7 +38,8 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model, HttpSession session, 
 			@RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "category", required = false) String category) {
+            @RequestParam(value = "category", required = false) String category,
+            RedirectAttributes rttr) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
 		Date date = new Date();
@@ -63,7 +65,22 @@ public class HomeController {
         // 동아리 검색 기능
         List<ClubDTO> clubList = clubService.searchClubs(keyword, category);
         model.addAttribute("clubList", clubList);
+        
+        // 동아리 등록 여부
+	    String email = (String) session.getAttribute("user_email");        
+	    String userType = (String) session.getAttribute("user_type_code");
 		
+		if (userType == null || !userType.equals("MGR")) {
+	        rttr.addFlashAttribute("msg", "동아리 등록 권한이 없습니다.");
+	    }
+	    
+	    // 이미 하나 등록한 경우
+		if (email != null) {
+	        if (clubService.hasClub(email)) {
+	             model.addAttribute("hasClub", true); 
+	        }
+	    }
+	    
 		return "home";
 	}
 	
