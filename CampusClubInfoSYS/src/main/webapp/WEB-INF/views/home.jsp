@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page session="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -190,13 +190,34 @@
 				</div>
 			</c:if>
 		</div>
-			<div class="admin-menu-section text-center my-5 p-4 border rounded bg-light">
-				<c:if test="${not empty loginUser}">
-					<div class="fw-bold"><c:out value="${msg}"></c:out></div>
-				</c:if>
+			<div class="admin-menu-section text-center my-5 p-4">
+			   	<c:if test="${!empty loginUser}">
+			        <c:choose>
+						<c:when test="${userHasClub}">
+			                <div class="alert alert-secondary d-inline-block px-4 fw-bold" role="alert">
+			                    이미 하나의 동아리를 등록하였습니다.
+			                </div>
+			                <p class="text-muted small mt-2">* 동아리는 계정당 1개만 등록할 수 있습니다.</p>
+			            </c:when>
+						
+			            <c:when test="${fn:trim(sessionScope.user_type_code) eq 'MGR'}">
+			                <a href="/club/register" class="btn btn-success btn-lg shadow-sm">
+			                	새 동아리 등록하기
+			                </a>
+			            </c:when>
+				
+			            <c:otherwise>
+			                <div class="d-grid gap-2 col-md-4 mx-auto">
+			                    <div class="alert alert-warning d-inline-block px-4 fw-bold" role="alert">
+			                    	동아리 등록 권한이 없습니다. (운영자에게 문의)
+			                	</div>
+			                </div>
+			            </c:otherwise>
+			        </c:choose>
+			    </c:if>
 			</div>
-		</div>
-	<footer class="bg-dark text-white-50 py-3 mt-5">
+		
+		<footer class="bg-dark text-white-50 py-3 mt-5">
 		<div class="container d-flex justify-content-between align-items-center">
 			<p class="mb-0">&copy; 2025 Campus Club Information System</p>
 			<p class="mb-0">현재 서버 시간: ${serverTime}.</P>

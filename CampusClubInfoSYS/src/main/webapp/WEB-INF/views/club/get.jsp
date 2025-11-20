@@ -36,25 +36,34 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label d-block">카테고리</label>
-                            <div class="row g-2 p-2 border rounded">
-                                <c:set var="categories" value="공연·예술|체육·레저|학술·전공|사회·봉사|문화·교류|창업·취업·자기계발|취미·창작|종교·인문|기타" />
-                                <c:set var="emojis" value="🎭|⚽|💻|💬|🌏|💡|🕹️|🪩|🧑‍🤝‍🧑" />
-                                <c:forEach var="catName" items="${fn:split(categories, '|')}" varStatus="status">
-                                    <c:set var="emoji" value="${fn:split(emojis, '|')[status.index]}" />
-                                    <div class="col-md-4 col-sm-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="category" 
-                                                id="category${status.index + 1}" value="${catName}" 
-                                                <c:if test="${club.category == catName}">checked</c:if>>
-                                            <label class="form-check-label" for="category${status.index + 1}">
-                                                ${emoji} ${status.index + 1}. ${catName}
-                                            </label>
-                                        </div>
-                                    </div>
-                                </c:forEach>
-                            </div>
-                        </div>
+						    <label class="form-label d-block">카테고리</label>
+						    
+						    <c:set var="categoriesStr" value="공연·예술|체육·레저|학술·전공|사회·봉사|문화·교류|창업·취업·자기계발|취미·창작|종교·인문|기타" />
+						    <c:set var="emojisStr" value="🎭|⚽|💻|💬|🌏|💡|🕹️|🪩|🧑‍🤝‍🧑" />
+						    
+						    <c:set var="catNames" value="${fn:split(categoriesStr, '|')}" />
+						    <c:set var="emoList" value="${fn:split(emojisStr, '|')}" />
+						    
+						    <div class="row g-2 p-2 border rounded">
+						        
+						        <c:forEach var="catName" items="${catNames}" varStatus="status">
+						            
+						            <c:set var="emoji" value="${emoList[status.index]}" />
+						            
+						            <div class="col-md-4 col-sm-6">
+						                <div class="form-check">
+						                    <input class="form-check-input" type="radio" name="category" 
+						                        id="reg_category${status.index + 1}" value="${catName}">
+						                    
+						                    <label class="form-check-label" for="reg_category${status.index + 1}">
+						                        ${emoji} ${catName} 
+						                    </label>
+						                </div>
+						            </div>
+						        </c:forEach>
+						        
+						    </div>
+						</div>
                         
                         <div class="mb-3">
                             <label for="logo_file" class="form-label">로고 이미지 (현재: ${club.logo_url})</label>

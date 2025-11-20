@@ -42,13 +42,13 @@ public class ClubController {
 	    // 2. MGR이 아니면 접근 불가
 	    if (userType == null || !userType.equals("MGR")) {
 	        rttr.addFlashAttribute("msg", "동아리 등록 권한이 없습니다.");
-	        return "redirect:/club/list";
+	        return "redirect:/";
 	    }
 
 	    // 3. 이미 하나 등록한 경우 막기
 	    if (service.hasClub(loginEmail)) {
 	        rttr.addFlashAttribute("msg", "이미 하나의 동아리를 등록하였습니다.");
-	        return "redirect:/club/list";
+	        return "redirect:/";
 	    }
 	    // 4. MGR이고 아직 동아리 없으면 등록 페이지로
 	    return "club/register";
@@ -81,20 +81,6 @@ public class ClubController {
 			@RequestParam("logo_file") MultipartFile logoFile, 
 			RedirectAttributes rttr, HttpSession session) {
 		
-		String userType = (String) session.getAttribute("user_type_code");
-		String email    = (String) session.getAttribute("user_email");
-		
-		if (userType == null || !userType.equals("MGR")) {
-	        rttr.addFlashAttribute("msg", "동아리 등록 권한이 없습니다.");
-	        return "redirect:/club/list";
-	    }
-	    
-	    // 이미 하나 등록한 경우
-	    if (service.hasClub(email)) {
-	        rttr.addFlashAttribute("msg", "이미 하나의 동아리를 등록하였습니다.");
-	        return "redirect:/club/list";
-	    }
-	    
 		// 동아리장 이메일 추가
 		club.setLeader_email((String) session.getAttribute("user_email"));
 				
@@ -130,7 +116,7 @@ public class ClubController {
 		if (service.registerClub(club)) {
 			rttr.addFlashAttribute("result", "success"); 
 		} 
-		return "redirect:/club/list"; 
+		return "redirect:/"; 
 	} 
 	
 	// 동아리 상세 조회 
@@ -194,7 +180,7 @@ public class ClubController {
 		if (service.deleteClub(club_id)) {
 			rttr.addFlashAttribute("result", "success"); 
 		} 
-		return "redirect:/club/list"; 
+		return "redirect:/"; 
 	}
 
 }

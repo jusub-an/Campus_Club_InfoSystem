@@ -58,7 +58,7 @@
                         </form>
                     </c:if>
 
-                    <a href="../club/list" class="btn btn-sm btn-outline-secondary ms-auto">
+                    <a href="../" class="btn btn-sm btn-outline-secondary ms-auto">
                         <i class="bi bi-list-columns-reverse me-1"></i> 동아리 목록으로 돌아가기
                     </a>
                 </div>

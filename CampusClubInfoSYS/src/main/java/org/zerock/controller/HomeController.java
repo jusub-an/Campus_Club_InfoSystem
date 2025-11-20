@@ -68,17 +68,12 @@ public class HomeController {
         
         // 동아리 등록 여부
 	    String email = (String) session.getAttribute("user_email");        
-	    String userType = (String) session.getAttribute("user_type_code");
-		
-		if (userType == null || !userType.equals("MGR")) {
-	        rttr.addFlashAttribute("msg", "동아리 등록 권한이 없습니다.");
-	    }
 	    
-	    // 이미 하나 등록한 경우
-		if (email != null) {
-	        if (clubService.hasClub(email)) {
-	             model.addAttribute("hasClub", true); 
-	        }
+	    // 로그인한 경우에만 동아리 보유 여부 체크     
+	    if (email != null) {
+	        boolean hasClub = clubService.hasClub(email);
+	        // JSP에서 판단하기 위해 결과를 모델에 담음
+	        model.addAttribute("userHasClub", hasClub); 
 	    }
 	    
 		return "home";

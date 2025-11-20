@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -9,27 +10,27 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script>
         function validateForm() {
-            [cite_start]// 폼 요소들을 가져옵니다. [cite: 105]
+            // 폼 요소들을 가져옵니다. 
             var form = document.forms[0];
             
             // 1. 이름 (club_name) 확인
             if (form.club_name.value.trim() === "") {
-                [cite_start]alert("이름을 입력해 주세요."); [cite: 106]
+                alert("이름을 입력해 주세요.");
                 form.club_name.focus();
                 return false;
             }
 
             // 2. 카테고리 (category) 확인
             var categorySelected = false;
-            var categoryRadios = form.category; [cite_start]// name="category"인 모든 radio 버튼 [cite: 107]
+            var categoryRadios = form.category; // name="category"인 모든 radio 버튼 
             for(var i = 0; i < categoryRadios.length; i++) {
                 if(categoryRadios[i].checked) {
-                    [cite_start]categorySelected = true; [cite: 108]
+                    categorySelected = true; 
                     break;
                 }
             }
             if (!categorySelected) {
-                [cite_start]alert("카테고리를 선택해 주세요."); [cite: 109]
+                alert("카테고리를 선택해 주세요."); 
                 return false;
             }
             
@@ -39,19 +40,19 @@
             
             // 4. 한줄 설명 (description) 확인
             if (form.description.value.trim() === "") {
-                [cite_start]alert("한줄 설명을 입력해 주세요."); [cite: 111]
+                alert("한줄 설명을 입력해 주세요."); 
                 form.description.focus();
                 return false;
             }
 
             // 5. 소개글 (introduction) 확인
             if (form.introduction.value.trim() === "") {
-                [cite_start]alert("소개글을 입력해 주세요."); [cite: 112]
+                alert("소개글을 입력해 주세요.");
                 form.introduction.focus();
                 return false;
             }
-
-            [cite_start]// 모든 검사를 통과하면 true를 반환하여 폼이 제출됩니다. [cite: 113]
+			
+            // 모든 검사를 통과하면 true를 반환하여 폼이 제출됩니다. 
             return true;
         }
     </script>
@@ -62,7 +63,7 @@
 
     <div class="row">
         <div class="col-12">
-            [cite_start]<h2 class="text-center mb-5 text-success">새 동아리 등록</h2> [cite: 104]
+            <h2 class="text-center mb-5 text-success">새 동아리 등록</h2> 
         </div>
     </div>
 
@@ -82,24 +83,34 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label d-block">카테고리</label>
-                            <div class="row g-2 p-2 border rounded">
-                                <c:set var="categories" value="공연·예술|체육·레저|학술·전공|사회·봉사|문화·교류|창업·취업·자기계발|취미·창작|종교·인문|기타" />
-                                <c:set var="emojis" value="🎭|⚽|💻|💬|🌏|💡|🕹️|🪩|🧑‍🤝‍🧑" />
-                                <c:forEach var="catName" items="${fn:split(categories, '|')}" varStatus="status">
-                                    <c:set var="emoji" value="${fn:split(emojis, '|')[status.index]}" />
-                                    <div class="col-md-4 col-sm-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="category" 
-                                                id="reg_category${status.index + 1}" value="${catName}">
-                                            <label class="form-check-label" for="reg_category${status.index + 1}">
-                                                ${emoji} ${status.index + 1}. [cite_start]${catName} [cite: 114]
-                                            </label>
-                                        </div>
-                                    </div>
-                                </c:forEach>
-                            </div>
-                        </div>
+						    <label class="form-label d-block">카테고리</label>
+						    
+						    <c:set var="categoriesStr" value="공연·예술|체육·레저|학술·전공|사회·봉사|문화·교류|창업·취업·자기계발|취미·창작|종교·인문|기타" />
+						    <c:set var="emojisStr" value="🎭|⚽|💻|💬|🌏|💡|🕹️|🪩|🧑‍🤝‍🧑" />
+						    
+						    <c:set var="catNames" value="${fn:split(categoriesStr, '|')}" />
+						    <c:set var="emoList" value="${fn:split(emojisStr, '|')}" />
+						    
+						    <div class="row g-2 p-2 border rounded">
+						        
+						        <c:forEach var="catName" items="${catNames}" varStatus="status">
+						            
+						            <c:set var="emoji" value="${emoList[status.index]}" />
+						            
+						            <div class="col-md-4 col-sm-6">
+						                <div class="form-check">
+						                    <input class="form-check-input" type="radio" name="category" 
+						                        id="reg_category${status.index + 1}" value="${catName}">
+						                    
+						                    <label class="form-check-label" for="reg_category${status.index + 1}">
+						                        ${emoji} ${catName} 
+						                    </label>
+						                </div>
+						            </div>
+						        </c:forEach>
+						        
+						    </div>
+						</div>
 
                         <div class="mb-3">
                             <label for="logo_file" class="form-label">로고 이미지</label>
