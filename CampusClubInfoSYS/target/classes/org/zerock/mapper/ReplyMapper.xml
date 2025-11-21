@@ -24,11 +24,26 @@
     </update>
 
     <select id="getListByPostId" resultType="org.zerock.domain.ReplyVO">
-        SELECT * FROM reply 
-        WHERE post_id = #{post_id}
+        SELECT 
+            r.comment_id, 
+            r.post_id, 
+            r.author_email, 
+            r.content, 
+            r.created_date, 
+            r.parent_comment_id,
+            CASE 
+                WHEN c.leader_email = r.author_email THEN '동아리장'
+                WHEN m.user_email IS NOT NULL THEN '회원'
+                ELSE '비회원'
+            END AS writer_role
+        FROM reply r
+        JOIN post p ON r.post_id = p.post_id
+        JOIN club c ON p.club_id = c.club_id
+        LEFT JOIN member m ON (p.club_id = m.club_id AND r.author_email = m.user_email)
+        WHERE r.post_id = #{post_id}
         ORDER BY 
-            COALESCE(parent_comment_id, comment_id),
-            comment_id ASC 
+            COALESCE(r.parent_comment_id, r.comment_id),
+            r.comment_id ASC 
     </select>
     
     <delete id="deleteByPostId">

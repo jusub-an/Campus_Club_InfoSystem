@@ -32,6 +32,7 @@
                     <div class="mb-4">
                         <label class="form-label">게시판 선택</label>
                         <ul class="nav nav-pills card-header-pills">
+                           
                             <c:if test="${sessionScope.user_email == clubInfo.leader_email}">
                                 <li class="nav-item">
                                     <a class="nav-link active" href="#" data-role="allowed" data-value="공지">
@@ -41,7 +42,10 @@
                             </c:if>
                             
                             <li class="nav-item">
-                                <a class="nav-link ${sessionScope.user_email != clubInfo.leader_email ? 'active' : ''}" href="#" data-role="allowed" data-value="자유">
+                                <a class="nav-link ${sessionScope.user_email == clubInfo.leader_email ? '' : (isMember ? '' : 'disabled')}" 
+                                   href="#" 
+                                   data-role="${sessionScope.user_email == clubInfo.leader_email or isMember ? 'allowed' : 'restricted'}" 
+                                   data-value="자유">
                                     <i class="bi bi-chat-square-text-fill me-1"></i> 자유
                                 </a>
                             </li>
@@ -55,19 +59,37 @@
                             </c:if>
                             
                             <li class="nav-item">
-                                <a class="nav-link" href="#" data-role="allowed" data-value="문의">
+                                <a class="nav-link ${sessionScope.user_email != clubInfo.leader_email and !isMember ? 'active' : ''}" 
+                                   href="#" data-role="allowed" data-value="문의">
                                     <i class="bi bi-question-circle-fill me-1"></i> 문의
                                 </a>
                             </li>
                         </ul>
-                    </div>
+                        
+                        </div>
 
                     <form role="form" id="registerForm" action="/post/register" method="post" enctype="multipart/form-data">
                         
                         <input type="hidden" name="club_id" value="<c:out value='${club_id}'/>">
                         
-                        <input type="hidden" id="post_type_input" name="post_type" 
-                             value="${sessionScope.user_email == clubInfo.leader_email ? '공지' : '자유'}">
+                        <c:choose>
+                        	<c:when test="${sessionScope.user_email == clubInfo.leader_email}">
+                        		<c:set var="initType" value="공지"/>
+                        	</c:when>
+                        	<c:when test="${isMember}">
+                        		<c:set var="initType" value="자유"/>
+                        	</c:when>
+                        	<c:otherwise>
+                        		<c:set var="initType" value="문의"/>
+                        	</c:otherwise>
+                        </c:choose>
+                        
+                        <input type="hidden" id="post_type_input" name="post_type" value="${initType}">
+
+                    <form role="form" id="registerForm" action="/post/register" method="post" enctype="multipart/form-data">
+                        
+                        <input type="hidden" name="club_id" value="<c:out value='${club_id}'/>">
+                
                              
                         <div class="mb-3">
                             <label for="title" class="form-label">제목 (Title)</label> 

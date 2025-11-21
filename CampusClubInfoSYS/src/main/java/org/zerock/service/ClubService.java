@@ -25,4 +25,6 @@ public interface ClubService {
 	public List<ClubDTO> searchClubsByName(String keyword);
 	// 이름 + 카테고리로 검색
     List<ClubDTO> searchClubs(String keyword, String category);
+    public boolean checkMember(Long club_id, String user_email);
+    
 }

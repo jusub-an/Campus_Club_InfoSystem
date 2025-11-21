@@ -90,5 +90,13 @@ public class ClubServiceImpl implements ClubService {
                 noCategory ? null : category
         );
 	}
+	
+	@Override
+    public boolean checkMember(Long club_id, String user_email) {
+        if (user_email == null) {
+            return false; 
+        }
+        return mapper.checkMember(club_id, user_email) > 0;
+    }
 
 }

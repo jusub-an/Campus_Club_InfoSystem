@@ -46,21 +46,31 @@
                         <div class="mb-4">
                             <label class="form-label">게시판 선택</label>
                             <ul class="nav nav-pills card-header-pills">
-                                <c:if test="${sessionScope.user_email == clubInfo.leader_email}">
+                                
+                                <c:if test="${isLeader}">
                                     <li class="nav-item">
-                                        <a class="nav-link ${post.post_type == '공지' ? 'active' : ''}" href="#" data-role="allowed" data-value="공지">공지</a>
+                                        <a class="nav-link ${post.post_type == '공지' ? 'active' : ''}" 
+                                           href="#" data-role="allowed" data-value="공지">공지</a>
                                     </li>
                                 </c:if>
+                                
                                 <li class="nav-item">
-                                    <a class="nav-link ${post.post_type == '자유' ? 'active' : ''}" href="#" data-role="allowed" data-value="자유">자유</a>
+                                    <a class="nav-link ${post.post_type == '자유' ? 'active' : ''} ${isLeader or isMember ? '' : 'disabled'}" 
+                                       href="#" 
+                                       data-role="${isLeader or isMember ? 'allowed' : 'restricted'}" 
+                                       data-value="자유">자유</a>
                                 </li>
-                                <c:if test="${sessionScope.user_email == clubInfo.leader_email}">
+                                
+                                <c:if test="${isLeader}">
                                     <li class="nav-item">
-                                        <a class="nav-link ${post.post_type == '활동앨범' ? 'active' : ''}" href="#" data-role="allowed" data-value="활동앨범">활동앨범</a>
+                                        <a class="nav-link ${post.post_type == '활동앨범' ? 'active' : ''}" 
+                                           href="#" data-role="allowed" data-value="활동앨범">활동앨범</a>
                                     </li>
                                 </c:if>
+                                
                                 <li class="nav-item">
-                                    <a class="nav-link ${post.post_type == '문의' ? 'active' : ''}" href="#" data-role="allowed" data-value="문의">문의</a>
+                                    <a class="nav-link ${post.post_type == '문의' ? 'active' : ''}" 
+                                       href="#" data-role="allowed" data-value="문의">문의</a>
                                 </li>
                             </ul>
                         </div>

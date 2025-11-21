@@ -11,4 +11,5 @@ public class ReplyVO {
     private String content;         // 내용
     private Date created_date;    // 작성 날짜
     private Long parent_comment_id; // 부모 댓글 ID (대댓글용)
+    private String writer_role;
 }

@@ -238,9 +238,19 @@
 
 						// 새 글 등록 버튼
 						$("#regBtn").on("click", function() {
-						    var actionForm = $("#actionForm");
-						    var currentClubId = actionForm.find("input[name='club_id']").val();
-						    self.location = "/post/register" + (currentClubId ? "?club_id=" + currentClubId : "");
+							// 1. 로그인 여부 확인
+					        var userEmail = "${sessionScope.user_email}";
+					        
+					        if (!userEmail) {
+					            alert("로그인이 필요합니다.");
+					            self.location = "/user/login"; // 로그인 페이지로 이동
+					            return;
+					        }
+
+					        // 2. 로그인이 되어있다면 등록 페이지로 이동
+					        var actionForm = $("#actionForm");
+					        var currentClubId = actionForm.find("input[name='club_id']").val();
+					        self.location = "/post/register" + (currentClubId ? "?club_id=" + currentClubId : "");
 						});
 
 						var actionForm = $("#actionForm");
@@ -280,22 +290,17 @@
 								});
 
 						// 제목 클릭 이벤트 (게시글 상세 보기로 이동)
-						$(".move")
-								.on(
-										"click",
-										function(e) {
-
-											e.preventDefault();
-											actionForm
-													.append("<input type='hidden' name='post_id' value='"
-															+ $(this).attr(
-																	"href")
-															+ "'>");
-											actionForm.attr("action",
-													"/post/get");
-											actionForm.submit();
-
-										});
+						$(".move").on("click", function(e) {
+						    e.preventDefault();
+						    
+						    // ⭐️ [추가] 기존에 들어있던 post_id가 있다면 깨끗이 지워줍니다.
+						    actionForm.find("input[name='post_id']").remove(); 
+						    
+						    // 그 다음 새 post_id를 추가합니다.
+						    actionForm.append("<input type='hidden' name='post_id' value='" + $(this).attr("href") + "'>");
+						    actionForm.attr("action", "/post/get");
+						    actionForm.submit();
+						});
 
 						// 검색 폼 전송 이벤트
 						$("#searchForm").on("submit", function(e) {

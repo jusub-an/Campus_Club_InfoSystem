@@ -74,5 +74,11 @@
         </where>
         ORDER BY club_id DESC
     </select>
+    
+    <select id="checkMember" resultType="int">
+        SELECT COUNT(*) 
+        FROM member 
+        WHERE club_id = #{club_id} AND user_email = #{user_email}
+    </select>
 	
 </mapper>

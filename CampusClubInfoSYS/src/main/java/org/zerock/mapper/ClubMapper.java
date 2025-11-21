@@ -23,4 +23,6 @@ public interface ClubMapper {
     // 이름 + 카테고리 조건 검색
     List<ClubDTO> searchByCondition(@Param("keyword") String keyword,
                                     @Param("category") String category);
+    
+    public int checkMember(@Param("club_id") Long club_id, @Param("user_email") String user_email);
 }

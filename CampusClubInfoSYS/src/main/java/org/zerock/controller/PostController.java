@@ -112,18 +112,36 @@ public class PostController {
 		return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
 	}
 	
-	@GetMapping("/register")
-	public void register(
-			@RequestParam("club_id") Long club_id, // ⭐️ [추가] list.jsp의 'regBtn'[cite: 74]이 넘겨주는 club_id
-			Model model) { // ⭐️ [추가] Model
+	// ⭐️ [수정] 반환형 void -> String, 세션 체크 로직 추가
+		@GetMapping("/register")
+		public String register(
+				@RequestParam("club_id") Long club_id, 
+	            HttpSession session, 
+	            RedirectAttributes rttr, // 리다이렉트 메시지용
+				Model model) {
 
-		// ⭐️ [추가] club_id로 clubInfo를 찾아 모델에 추가
-		ClubDTO clubInfo = clubService.getClub(club_id);
-		model.addAttribute("clubInfo", clubInfo);
+			// 1. 로그인 여부 확인 (보안)
+			String user_email = (String) session.getAttribute("user_email");
+			if (user_email == null) {
+				log.warn("비로그인 사용자의 게시글 등록 페이지 접근 시도 blocked.");
+				rttr.addFlashAttribute("result", "login_required"); // 로그인 페이지에서 메시지 표시용
+				return "redirect:/user/login"; // ⭐️ 로그인 페이지로 강제 이동
+			}
 
-		// ⭐️ [추가] 폼(form)에서 club_id를 hidden으로 사용하기 위해 추가
-		model.addAttribute("club_id", club_id); 
-	}
+			// 2. 동아리 정보 조회 및 모델 담기 (기존 로직)
+			ClubDTO clubInfo = clubService.getClub(club_id);
+			model.addAttribute("clubInfo", clubInfo);
+			model.addAttribute("club_id", club_id); 
+			
+			// 3. 회원 여부 확인 (기존 로직)
+			boolean isMember = clubService.checkMember(club_id, user_email);
+			model.addAttribute("isMember", isMember);
+			
+			// 반환형이 String일 때, JSP 경로를 명시적으로 리턴하지 않으면
+			// 요청 URL(/post/register)에 따라 자동으로 /WEB-INF/views/post/register.jsp로 이동합니다.
+			// 하지만 명시적으로 적어주는 것이 안전합니다.
+			return "/post/register";
+		}
 
 	 @GetMapping("/list")
 	 public void list(
@@ -189,28 +207,64 @@ public class PostController {
 	@GetMapping("/get")
 	public String get(@RequestParam("post_id") Long post_id, Criteria cri, Model model, HttpSession session, RedirectAttributes rttr) {
 		String user_email = (String) session.getAttribute("user_email");
+		
+        // (주의) 로그인하지 않은 사용자가 게시글을 볼 수 없게 막혀있습니다.
+        // 만약 로그인 안 해도 글을 보게 하려면 이 if문을 주석 처리하거나 제거해야 합니다.
 		if (user_email == null) {
 			log.warn("로그인하지 않은 사용자의 접근 시도: /post/get");
-			rttr.addFlashAttribute("result", "auth_fail"); // 로그인 페이지에 알림 전달
-			return "redirect:/user/login"; // 로그인 페이지로 리다이렉트
+			rttr.addFlashAttribute("result", "auth_fail"); 
+			return "redirect:/user/login"; 
 		}
 		
 		log.info("/get");
-	    model.addAttribute("post", service.get(post_id));
-	    model.addAttribute("cri", cri); // cri 객체를 모델에 추가
+		PostVO post = service.get(post_id);
+	    model.addAttribute("post", post);
+	    model.addAttribute("cri", cri);
+	    
+	    // ⭐️ [추가] 권한 체크 로직 (동아리장/회원 여부)
+	    if (post != null) {
+            // 1. 동아리 정보 가져오기
+	    	ClubDTO clubInfo = clubService.getClub(post.getClub_id());
+			model.addAttribute("clubInfo", clubInfo);
+            
+            // 2. 동아리장 여부 확인
+            boolean isLeader = clubInfo.getLeader_email().equals(user_email);
+            model.addAttribute("isLeader", isLeader);
+
+            // 3. 일반 회원 여부 확인
+            boolean isMember = clubService.checkMember(post.getClub_id(), user_email);
+            model.addAttribute("isMember", isMember);
+		}
 	    
 	    return "/post/get";
 	}
 	 
 	@GetMapping("/modify")
-	public void modify(@RequestParam("post_id") Long post_id, Criteria cri, Model model) {
+	public void modify(@RequestParam("post_id") Long post_id, Criteria cri, Model model, HttpSession session) { // HttpSession 추가
 	    log.info("/modify");
+	    
 	    PostVO post = service.get(post_id);
-	    model.addAttribute("post", service.get(post_id));
-	    model.addAttribute("cri", cri); // cri 객체를 모델에 추가
+	    model.addAttribute("post", post);
+	    model.addAttribute("cri", cri);
+	    
 	    if(post != null) {
 			ClubDTO clubInfo = clubService.getClub(post.getClub_id());
 			model.addAttribute("clubInfo", clubInfo);
+			
+			// ⭐️ [추가] 권한 체크 로직 (modify.jsp에서 탭 제어를 위해 필요)
+			String user_email = (String) session.getAttribute("user_email");
+			if (user_email != null) {
+				// 1. 동아리장 여부
+				boolean isLeader = clubInfo.getLeader_email().equals(user_email);
+				model.addAttribute("isLeader", isLeader);
+				
+				// 2. 일반 회원 여부
+				boolean isMember = clubService.checkMember(post.getClub_id(), user_email);
+				model.addAttribute("isMember", isMember);
+			} else {
+				model.addAttribute("isLeader", false);
+				model.addAttribute("isMember", false);
+			}
 		}
 	}
 	 

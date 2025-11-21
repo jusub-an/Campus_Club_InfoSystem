@@ -98,13 +98,24 @@
                     <i class="bi bi-chat-dots-fill me-1"></i> 새 댓글
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label for="replyContent" class="form-label">댓글 내용</label>
-                        <textarea class="form-control" rows="3" id="replyContent" placeholder="댓글을 입력하세요."></textarea>
-                    </div>
-                    <button id="replyAddBtn" class="btn btn-primary btn-sm float-end">
-                        <i class="bi bi-chat-dots me-1"></i> 등록
-                    </button>
+                    
+                    <c:choose>
+                        <c:when test="${post.post_type == '문의' or sessionScope.user_email == clubInfo.leader_email or isMember}">
+                            <div class="mb-3">
+                                <label for="replyContent" class="form-label">댓글 내용</label>
+                                <textarea class="form-control" rows="3" id="replyContent" placeholder="댓글을 입력하세요."></textarea>
+                            </div>
+                            <button id="replyAddBtn" class="btn btn-primary btn-sm float-end">
+                                <i class="bi bi-chat-dots me-1"></i> 등록
+                            </button>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="alert alert-secondary text-center mb-0">
+                                <i class="bi bi-lock-fill"></i> 동아리 회원만 댓글을 작성할 수 있습니다.
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+
                 </div>
             </div>
 
@@ -209,83 +220,229 @@ $(document).ready(function() {
     
     var post_id = <c:out value="${post.post_id}" />; 
     var replyList = $("#replyList"); 
+
+    var postType = '<c:out value="${post.post_type}"/>';
+    var isLeader = ${empty isLeader ? 'false' : isLeader}; 
+    var isMember = ${empty isMember ? 'false' : isMember};
+    var loggedInUser = "${sessionScope.user_email}";
     
-    showList(); // 페이지 로드 시 목록 표시
+    // ⭐️ [추가] 들여쓰기를 위한 CSS 스타일 동적 추가
+    $("<style>")
+        .prop("type", "text/css")
+        .html("\
+            .reply-tree ul { list-style: none; padding-left: 0; } \
+            .reply-tree ul ul { margin-left: 30px; border-left: 2px solid #e9ecef; } \
+            .reply-tree li { position: relative; } \
+        ")
+        .appendTo("head");
 
-    // ⭐️ 1. 댓글 목록을 그리는 함수
+    showList(); 
+    
+    function canReply() {
+        if (postType === '문의') return true;
+        if (isLeader) return true;
+        if (isMember) return true;
+        return false;
+    }
+
+    // ⭐️ 1. (수정) 메인 목록 출력 함수
     function showList() {
-        
         replyService.getList(post_id, function(list) {
+            replyList.empty();
             
-            replyList.empty(); 
-            var str = "";
-            
-            // (A) 1차 순회: 부모 댓글(parent_comment_id == null)만 먼저 그립니다.
-            list.forEach(function(reply) {
-                if (reply.parent_comment_id == null) {
-                    str += formatReply(reply, false); 
-                }
-            });
-            replyList.html(str); // 1차 렌더링 (부모만)
-            
-            // (B) 2차 순회: 대댓글(parent_comment_id != null)을 부모에 붙입니다.
-            list.forEach(function(reply) {
-                if (reply.parent_comment_id != null) {
-                    var parentLi = replyList.find("li[data-comment-id='" + reply.parent_comment_id + "']");
-                    var childHtml = formatReply(reply, true); 
-                    
-                    // 부모 <li> 안의 .child-replies <ul>에 추가
-                    parentLi.find(".child-replies").append(childHtml);
-                }
-            });
-            
-        });
-    } 
+            if (list == null || list.length === 0) {
+                replyList.html("<li class='list-group-item text-center text-muted'>등록된 댓글이 없습니다.</li>");
+                return;
+            }
 
-    // ⭐️ 2. 댓글 <li> 템플릿을 생성하는 함수
-    function formatReply(reply, isChild) {
+            // 1. 평면 리스트를 트리 구조로 변환
+            var replyTree = buildCommentTree(list);
+            
+            // 2. 재귀적으로 HTML 생성
+            var htmlStr = "<div class='reply-tree'><ul>";
+            htmlStr += recursiveRender(replyTree);
+            htmlStr += "</ul></div>";
+            
+            replyList.html(htmlStr);
+        });
+    }
+
+    // ⭐️ [신규] 리스트 -> 트리 변환 헬퍼 함수
+    function buildCommentTree(list) {
+        var map = {};
+        var roots = [];
         
-        var loggedInUser = "${sessionScope.user_email}";
+        // 1. 모든 댓글을 Map에 저장 (key: comment_id)
+        list.forEach(function(reply) {
+            reply.children = []; // 자식을 담을 배열 초기화
+            map[reply.comment_id] = reply;
+        });
+        
+        // 2. 부모-자식 연결
+        list.forEach(function(reply) {
+            if (reply.parent_comment_id != null && map[reply.parent_comment_id]) {
+                // 부모가 있으면 부모의 children 배열에 추가
+                map[reply.parent_comment_id].children.push(reply);
+            } else {
+                // 부모가 없으면 최상위 루트
+                roots.push(reply);
+            }
+        });
+        return roots;
+    }
+
+    // ⭐️ [신규] 재귀적 렌더링 함수
+    function recursiveRender(nodes) {
+        var html = "";
+        
+        nodes.forEach(function(reply) {
+            // HTML 생성 (formatReplyBody 함수로 분리)
+            html += formatReplyBody(reply);
+            
+            // 자식이 있다면 재귀 호출로 내부에 <ul> 생성
+            if (reply.children && reply.children.length > 0) {
+                html += "<ul>";
+                html += recursiveRender(reply.children); // 자기 자신을 다시 호출 (재귀)
+                html += "</ul>";
+            }
+            
+            html += "</li>"; // formatReplyBody에서 연 <li>를 여기서 닫음
+        });
+        
+        return html;
+    }
+
+    // ⭐️ [신규] 댓글 1개 내용 생성 함수 (<li> 시작 태그 포함, 닫는 태그 제외)
+    function formatReplyBody(reply) {
         var str = "";
+        var liClass = "list-group-item";
         
-        var liClass = isChild ? "list-group-item child-reply" : "list-group-item";
+        // 들여쓰기 효과는 CSS(ul ul margin-left)로 처리하므로 child-reply 클래스는 제거해도 됨
         
         str += "<li class='" + liClass + "' data-comment-id='" + reply.comment_id + "'>";
         
-        // (대댓글 표시)
-        if (isChild) {
-            str += "<i class='bi bi-arrow-return-right me-1'></i> ";
+        var roleBadge = "";
+        if (reply.writer_role === '동아리장') {
+            roleBadge = " <span class='badge rounded-pill bg-success'>동아리장</span>";
+        } else if (reply.writer_role === '회원') {
+            roleBadge = " <span class='badge rounded-pill bg-primary'>회원</span>";
+        } else {
+            roleBadge = " <span class='badge rounded-pill bg-secondary'>비회원</span>";
         }
         
-        str += "<strong>" + reply.author_email + "</strong>";
-        str += "<small class='float-end text-muted'>" + reply.created_date + "</small>"; 
+        str += "<div>";
+        // 대댓글인 경우 아이콘 표시 (선택 사항)
+        if (reply.parent_comment_id != null) {
+            str += "<i class='bi bi-arrow-return-right text-secondary me-1'></i>";
+        }
+        str += "<strong>" + reply.author_email + "</strong>" + roleBadge;
+        str += "<small class='float-end text-muted'>" + displayTime(reply.created_date) + "</small>"; 
+        str += "</div>";
         
-        // 댓글 내용 영역
-        str += "<p class='reply-content'>" + reply.content + "</p>";
+        str += "<p class='reply-content mt-2'>" + reply.content + "</p>";
         
         str += "<div class='d-flex gap-2 mb-2'>";
-        // (A) 부모 댓글에만 "답글" 버튼 표시
-        if (!isChild) {
+        
+        // 답글 버튼
+        if (canReply()) { 
             str += "<button class='btn btn-info btn-xs btn-show-reply-form'><i class='bi bi-reply-fill'></i> 답글</button>";
         }
         
-        // (B) 본인 댓글에만 "수정", "삭제" 버튼 표시
+        // 수정/삭제 버튼
         if (reply.author_email === loggedInUser) {
-            str += "<button class='btn btn-warning btn-xs btn-modify'><i class='bi bi-pencil-square'></i> 수정</button>"; 
+            str += "<button class='btn btn-warning btn-xs btn-modify'><i class='bi bi-pencil-square'></i> 수정</button>";
             str += "<button class='btn btn-danger btn-xs btn-delete'><i class='bi bi-trash-fill'></i> 삭제</button>";
         }
         str += "</div>";
 
-        // (C) 대댓글 폼과 목록 (부모 댓글에만 생성됨)
-        if (!isChild) {
+        // 답글 입력 폼 (숨김 상태)
+        if (canReply()) {
             str += "<div class='reply-form-container border p-2 bg-white rounded' style='display:none; margin-top:10px;'>";
             str += "  <textarea class='form-control mb-2' rows='2' placeholder='답글 내용을 입력하세요.'></textarea>";
             str += "  <button class='btn btn-primary btn-xs btn-register-reply' data-parent-id='" + reply.comment_id + "'>답글 등록</button>";
             str += "</div>";
-            
-            str += "<ul class='list-group list-group-flush child-replies mt-2'></ul>";
         }
         
+        // 닫는 </li> 태그는 recursiveRender에서 처리함 (자식 ul을 포함해야 하기 때문)
+        return str;
+    }
+    
+ // [추가] 날짜 포맷팅 함수
+    function displayTime(timeValue) {
+        var dateObj = new Date(timeValue);
+        var today = new Date();
+        
+        var year = dateObj.getFullYear();
+        var month = dateObj.getMonth() + 1;
+        var date = dateObj.getDate();
+        var hour = dateObj.getHours();
+        var minute = dateObj.getMinutes();
+        var second = dateObj.getSeconds();
+
+        // 24시간 이내면 시간만, 지나면 날짜 표시 (선택사항. 원치 않으면 무조건 날짜 포맷 리턴하면 됨)
+        // 여기서는 요청하신 대로 날짜 포맷으로 리턴합니다.
+        return [year, '/', (month > 9 ? '' : '0') + month, '/', (date > 9 ? '' : '0') + date, ' ', 
+                (hour > 9 ? '' : '0') + hour, ':', (minute > 9 ? '' : '0') + minute].join('');
+    }
+
+ // ⭐️ 2. 댓글 <li> 템플릿을 생성하는 함수
+    function formatReply(reply, isChild) {
+        
+        var str = "";
+        var liClass = isChild ? "list-group-item child-reply" : "list-group-item";
+        
+        // li 태그 시작
+        str += "<li class='" + liClass + "' data-comment-id='" + reply.comment_id + "'>";
+        
+        // (대댓글 아이콘)
+        if (isChild) {
+            str += "<i class='bi bi-arrow-return-right me-1'></i> ";
+        }
+        
+        var roleBadge = "";
+        if (reply.writer_role === '동아리장') {
+            roleBadge = " <span class='badge rounded-pill bg-success'>동아리장</span>";
+        } else if (reply.writer_role === '회원') {
+            roleBadge = " <span class='badge rounded-pill bg-primary'>회원</span>";
+        } else {
+            roleBadge = " <span class='badge rounded-pill bg-secondary'>비회원</span>";
+        }
+        
+        str += "<strong>" + reply.author_email + "</strong>" + roleBadge;
+        
+        str += "<small class='float-end text-muted'>" + displayTime(reply.created_date) + "</small>"; 
+        
+        // 댓글 내용
+        str += "<p class='reply-content'>" + reply.content + "</p>";
+        
+        str += "<div class='d-flex gap-2 mb-2'>";
+        
+        // 답글 버튼 (권한 체크)
+        if (canReply()) { 
+            str += "<button class='btn btn-info btn-xs btn-show-reply-form'><i class='bi bi-reply-fill'></i> 답글</button>";
+        }
+        
+        // 수정/삭제 버튼
+        if (reply.author_email === loggedInUser) {
+            str += "<button class='btn btn-warning btn-xs btn-modify'><i class='bi bi-pencil-square'></i> 수정</button>";
+            str += "<button class='btn btn-danger btn-xs btn-delete'><i class='bi bi-trash-fill'></i> 삭제</button>";
+        }
+        str += "</div>";
+
+        // 답글 입력 폼
+        if (canReply()) {
+            str += "<div class='reply-form-container border p-2 bg-white rounded' style='display:none; margin-top:10px;'>";
+            str += "  <textarea class='form-control mb-2' rows='2' placeholder='답글 내용을 입력하세요.'></textarea>";
+            str += "  <button class='btn btn-primary btn-xs btn-register-reply' data-parent-id='" + reply.comment_id + "'>답글 등록</button>";
+            str += "</div>";
+        }
+        
+        // ⭐️ [수정] 자식을 붙일 <ul> 컨테이너 생성 로직 변경
+        // 기존: if (!isChild) { ... } 
+        // 변경: 조건 없이 모든 댓글에 하위 리스트 컨테이너를 생성합니다. 
+        // (이렇게 해야 답글(Level 2) 밑에 답글(Level 3)이 붙을 수 있습니다.)
+        str += "<ul class='list-group list-group-flush child-replies mt-2'></ul>";
+
         str += "</li>";
         return str;
     }
