@@ -38,12 +38,12 @@
 		transition: all 0.2s;
 	}
 	.btn-logout-custom {
-		background-color: #fcd34d; /* amber-300 (주황색 계열 유지) */
-		color: #1f2937; /* gray-800 */
+		background-color: #dc3545; /* amber-300 (주황색 계열 유지) */
+		color: #F5F5F5; /* gray-800 */
 		border-color: #fcd34d;
 	}
 	.btn-logout-custom:hover {
-		background-color: #fbbf24; /* amber-400 */
+		background-color: #b02a37 ; /* amber-400 */
 		border-color: #fbbf24;
 	}
 
