@@ -3,6 +3,7 @@ package org.zerock.controller;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
 
@@ -75,6 +76,30 @@ public class HomeController {
 	        // JSP에서 판단하기 위해 결과를 모델에 담음
 	        model.addAttribute("userHasClub", hasClub); 
 	    }
+	    
+	    // 1. 카테고리 이름과 이미지 URL을 매핑한 Map 생성 (java.util.LinkedHashMap 사용 권장)
+        // LinkedHashMap을 사용하면 등록한 순서대로 JSP에서 출력할 수 있습니다.
+        Map<String, String> categoryMap = new java.util.LinkedHashMap<>();
+        categoryMap.put("전체", "/resources/images/cat_all.png");
+        categoryMap.put("공연·예술", "/resources/images/cat_art.jpg");
+        categoryMap.put("체육·레저", "/resources/images/cat_sports.jpg");
+        categoryMap.put("학술·전공", "/resources/images/cat_study.jpg");
+        categoryMap.put("사회·봉사", "/resources/images/cat_volunteer.jpg");
+        categoryMap.put("문화·교류", "/resources/images/cat_culture.jpg");
+        categoryMap.put("창업·취업·자기계발", "/resources/images/cat_career.jpg");
+        categoryMap.put("취미·창작", "/resources/images/cat_hobby.jpg");
+        categoryMap.put("종교·인문", "/resources/images/cat_religion.jpg");
+        categoryMap.put("기타", "/resources/images/cat_etc.jpg");
+
+        // 2. Model에 categoryMap을 담아 JSP로 전달
+        model.addAttribute("categoryMap", categoryMap);
+        
+        // 3. (기존 로직 유지) 검색/필터링을 위해 기존 변수들도 Model에 추가
+        // home.jsp에서 c:forEach items="${categoryMap.keySet()}"를 사용하면 
+        // 카테고리 목록(categories) 변수는 따로 넘기지 않아도 됩니다.
+
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("keyword", keyword);
 	    
 		return "home";
 	}

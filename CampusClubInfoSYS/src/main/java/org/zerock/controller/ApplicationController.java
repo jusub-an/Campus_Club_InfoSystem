@@ -29,7 +29,7 @@ public class ApplicationController {
     private ApplicationService service;
     
     @GetMapping("/list")
-    public String application_list(@RequestParam("club_id") Long club_id, Model model, UserDTO user, ApplicationDTO applicant) {
+    public String application_list(@RequestParam("club_id") Long club_id, HttpSession session, Model model, UserDTO user, ApplicationDTO applicant) {
     	// 가입 신청 목록
     	List<ApplicationDTO> a_list = service.getApplyListByClub(club_id);
     	List<String> users_name = new ArrayList<>();
