@@ -29,6 +29,28 @@
     	<c:out value="${clubName}" default="게시판 목록"/>
     </h1>
     
+    <!-- 🔹 동아리 소개 / 설명 카드 -->
+    <c:if test="${not empty clubInfo.introduction or not empty clubInfo.description}">
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary mb-2">
+                            <i class="bi bi-info-circle-fill me-1"></i> 동아리 소개
+                        </h5>
+
+                        <!-- 상세 소개글 -->
+                        <c:if test="${not empty clubInfo.introduction}">
+                            <p class="card-text mb-0">
+                                <c:out value="${clubInfo.introduction}"/>
+                            </p>
+                        </c:if>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </c:if>
+    
     <div class="row mb-4">
         <div class="col-lg-12">
             <div class="card shadow-sm p-3 mb-3">
