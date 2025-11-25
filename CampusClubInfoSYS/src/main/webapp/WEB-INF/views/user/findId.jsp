@@ -98,11 +98,11 @@
                             <form action="<c:url value='/user/findId' />" method="post">
 
                                 <div class="mb-3">
-                                	<label for="name" class="form-label">이름</label>
+                                	<label for="name" class="form-label fw-semibold">이름</label>
                                 	<input type="text" class="form-control" id="name" name="name" required> 
                            	 	</div>
                             	<div class="mb-4">
-                                	<label for="student_id" class="form-label">학번</label>
+                                	<label for="student_id" class="form-label fw-semibold">학번</label>
                                 	<input type="text" class="form-control" id="student_id" name="student_id" required> 
                             	</div>
 
