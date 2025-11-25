@@ -37,5 +37,11 @@
         SET password = #{password}
         WHERE user_email = #{user_email}
     </update>
+    
+    <select id="findName" resultType="java.lang.String">
+        SELECT name 
+        FROM users
+        WHERE user_email = #{user_email, jdbcType=VARCHAR}
+    </select>
 
 </mapper>

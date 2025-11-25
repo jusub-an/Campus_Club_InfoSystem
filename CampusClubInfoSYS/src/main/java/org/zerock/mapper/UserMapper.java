@@ -21,4 +21,7 @@ public interface UserMapper {
     
     // [추가] 비밀번호 업데이트
     public int updatePassword(UserDTO user);
+    
+    // [추가] 사용자 이름 확인
+    public String findName(String user_email);
 }

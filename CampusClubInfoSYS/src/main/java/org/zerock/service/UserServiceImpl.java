@@ -91,4 +91,10 @@ public class UserServiceImpl implements UserService {
         
         return result == 1; // 1이면 true(성공) 반환
     }
+    
+    // [추가] 사용자 이름 확인
+    @Override
+    public String findName(String user_email) {
+    	return mapper.findName(user_email);
+    }
 }
