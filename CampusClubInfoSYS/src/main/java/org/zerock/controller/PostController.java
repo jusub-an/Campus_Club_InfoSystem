@@ -31,7 +31,7 @@ import org.zerock.domain.ClubDTO;
 import org.zerock.domain.Criteria;
 import org.zerock.domain.PageDTO;
 import org.zerock.domain.FileVO; // 추가
-import org.zerock.mapper.FileMapper; // 추가
+import org.zerock.service.FileService;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -42,15 +42,15 @@ import lombok.extern.log4j.Log4j;
 //@AllArgsConstructor
 public class PostController {
 	private PostService service;
-	private FileMapper fileMapper;
+	private FileService fileService;
 	private ClubService clubService;
 	
 	private String uploadFolder = "C:\\upload";
 	
 	@Autowired
-	public PostController(PostService service, FileMapper fileMapper, ClubService clubService) {
+	public PostController(PostService service, FileService fileService, ClubService clubService) {
 		this.service = service;
-		this.fileMapper = fileMapper;
+		this.fileService = fileService;
 		this.clubService = clubService;
 	}
 	
@@ -60,7 +60,7 @@ public class PostController {
 		log.info("download file_id: " + file_id);
 		
 		// 1. file_id로 DB에서 파일 정보(FileVO) 가져오기
-		FileVO file = fileMapper.getFile(file_id);
+		FileVO file = fileService.getFile(file_id);
 		if (file == null) {
 			log.error("File not found in DB: " + file_id);
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -300,7 +300,7 @@ public class PostController {
 					 
 					 // (deleteFile 메소드의 로직을 가져옴)
 					 // 2-1. DB에서 파일 정보 가져오기 (물리적 파일 삭제를 위해)
-					 FileVO file = fileMapper.getFile(file_id);
+					 FileVO file = fileService.getFile(file_id);
 					 if (file != null) {
 						 // 2-2. 물리적 파일 삭제
 						 File fileOnDisk = new File(uploadFolder, file.getStorage_path());
@@ -308,7 +308,7 @@ public class PostController {
 							 fileOnDisk.delete();
 						 }
 						 // 2-3. DB에서 파일 레코드 삭제
-						 fileMapper.delete(file_id);
+						 fileService.deleteFile(file_id);
 					 }
 				 }
 			 }
@@ -351,7 +351,7 @@ public class PostController {
 			
 			try {
 				// 1. DB에서 파일 정보 가져오기 (물리적 파일 삭제를 위해)
-				FileVO file = fileMapper.getFile(file_id);
+				FileVO file = fileService.getFile(file_id);
 				if (file == null) {
 					log.warn("DB에 파일 정보가 없습니다: " + file_id);
 					// DB에 없어도 삭제 성공으로 간주
@@ -371,7 +371,7 @@ public class PostController {
 				}
 				
 				// 3. DB에서 파일 레코드 삭제
-				fileMapper.delete(file_id);
+				fileService.deleteFile(file_id);
 				
 				return new ResponseEntity<>("deleted", HttpStatus.OK);
 				
