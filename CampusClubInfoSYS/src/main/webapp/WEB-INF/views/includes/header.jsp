@@ -135,20 +135,21 @@
 	
 			<c:choose>
 				<%-- 1. 로그인 상태 --%>
-				<c:when test="${not empty sessionScope.user_email}">
-    				<span class="login-user-text me-3 d-none d-sm-inline">
-        				<strong>${sessionScope.user_email}</strong>님
-    				</span>
-    				<a href="${pageContext.request.contextPath}/user/logout" class="btn btn-login-action btn-logout-custom btn-sm">
-        				로그아웃
-    				</a>
+				<c:when test="${!empty userName}">
+					<span class="login-user-text me-3 d-none d-sm-inline">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1 align-text-bottom"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+						<strong>${userName}</strong>님
+					</span>
+					<a href="user/logout" class="btn btn-login-action btn-logout-custom btn-sm">
+						로그아웃
+					</a>
 				</c:when>
 				
 				<%-- 2. 로그아웃 상태 --%>
 				<c:otherwise>
-    				<a href="${pageContext.request.contextPath}/user/login" class="btn btn-login-action btn-login-custom btn-sm">
-       					 로그인
-    				</a>
+					<a href="user/login" class="btn btn-login-action btn-login-custom btn-sm">
+						로그인
+					</a>
 				</c:otherwise>
 			</c:choose>
 		</div>
