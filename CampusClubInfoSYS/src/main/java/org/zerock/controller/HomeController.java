@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.service.ClubService;
+import org.zerock.service.UserService;
 import org.zerock.domain.ClubDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
 	private final ClubService clubService;
+	private final UserService userService;
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -47,11 +49,12 @@ public class HomeController {
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 		
 		String formattedDate = dateFormat.format(date);
+		String loginUserEmail = (String) session.getAttribute("user_email");
 		
 		model.addAttribute("serverTime", formattedDate );
 		
-		model.addAttribute("loginUser", session.getAttribute("user_email"));
-		
+		model.addAttribute("loginUser", loginUserEmail);
+		model.addAttribute("userName", userService.findName(loginUserEmail));
 		// 동아리 카테고리 목록(화면에서 버튼으로 사용)
         List<String> categoryList = Arrays.asList(
                 "전체", "공연·예술", "체육·레저", "학술·전공", "사회·봉사", "문화·교류",

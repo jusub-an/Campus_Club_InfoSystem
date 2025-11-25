@@ -21,4 +21,7 @@ public interface UserService {
     
     // [추가] 비밀번호 재설정
     public boolean resetPassword(UserDTO user);
+    
+    // [추가] 사용자 이름 확인
+    public String findName(String user_email);
 }
