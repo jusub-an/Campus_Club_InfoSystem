@@ -23,6 +23,8 @@
     </style>
 </head>
 <body>
+
+<%@include file="../includes/header.jsp" %>
 <div class="container my-5">
 
     <h1 class="text-center mb-4 text-primary">
