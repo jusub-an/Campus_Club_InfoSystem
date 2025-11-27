@@ -162,6 +162,12 @@
 		footer {
 			background-color: #1e293b !important; /* slate-800 */
 		}
+		
+		/* 🔍 input(검색창) 보라색 포커스 */
+		.form-control:focus {
+    		border-color: #4f46e5 !important;
+    		box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important; /* 연보라 그림자 */
+		}
 	</style>
 </head>
 <body>

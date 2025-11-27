@@ -17,9 +17,78 @@
         }
         .pagination li.active a {
             color: #fff !important;
-            background-color: #0d6efd !important;
-            border-color: #0d6efd !important;
+            background-color: #4f46e5 !important;
+        	border-color: #4f46e5 !important;
         }
+        
+    	.club-title {
+    		font-weight: 800;
+        	margin-top: 100px; /* 원하는 만큼 조절 */
+        	color: #4f46e5 !important; /* Tailwind indigo-600 */
+    	}
+    	/* 브랜드 로고 스타일 (인디고 색상으로 변경) */
+		.navbar-brand {
+			font-weight: 800;
+			color: #4f46e5 !important; /* Tailwind indigo-600 */
+			letter-spacing: 0.5px;
+		}
+		.table-header-purple th {
+    		background-color: #4f46e5 !important;
+    		color: #ffffff !important;
+		}
+		
+    	
+    	/* ✅ 기본 primary 버튼(새 글 등록 등) 파란색 → 보라색 */
+    	.btn-primary {
+        	background-color: #4f46e5 !important;
+        	border-color: #4f46e5 !important;
+    	}
+    	.btn-primary:hover,
+    	.btn-primary:focus {
+        	background-color: #4338ca !important; /* 살짝 진한 보라 */
+        	border-color: #4338ca !important;
+    	}
+
+    	/* ⭐ 기본 탭 스타일 — 글자 보라색 */
+		.nav-tabs .nav-link {
+    		color: #4f46e5 !important;
+    		font-weight: 600;
+		}
+
+		/* ⭐ 선택된 탭(활성 탭) — 글자 검정색 + 테두리 검정색 */
+		.nav-tabs .nav-link.active {
+    		color: #000000 !important;
+    		font-weight: 700;
+    		border-color: #000000 #000000 #ffffff !important;
+    		background-color: #ffffff !important;
+		}
+		
+		/* 🔍 Search 버튼 보라색 */
+		.btn-outline-primary {
+    		color: #4f46e5 !important;
+    		border-color: #4f46e5 !important;
+		}
+
+		.btn-outline-primary:hover,
+		.btn-outline-primary:focus {
+    		background-color: #4f46e5 !important;
+    		border-color: #4f46e5 !important;
+    		color: #fff !important;
+		}
+	
+	
+		/* 🔍 input(검색창) 보라색 포커스 */
+		.form-control:focus {
+    		border-color: #4f46e5 !important;
+    		box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important; /* 연보라 그림자 */
+		}
+
+		/* 🔍 select(드롭다운) 보라색 포커스 */
+		.form-select:focus {
+    		border-color: #4f46e5 !important;
+    		box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important;
+		}
+	
     </style>
 </head>
 <body>
@@ -27,9 +96,10 @@
 <%@include file="../includes/header.jsp" %>
 <div class="container my-5">
 
-    <h1 class="text-center mb-4 text-primary">
+    <h1 class="text-center mb-4 text-primary club-title">
     	<c:out value="${clubName}" default="게시판 목록"/>
     </h1>
+
     
     <!-- 🔹 동아리 소개 / 설명 카드 -->
     <c:if test="${not empty clubInfo.introduction or not empty clubInfo.description}">
@@ -104,8 +174,10 @@
 
                     <ul class="nav nav-tabs mb-4">
                         <li class="nav-item">
-                            <a class="nav-link ${pageMaker.cri.post_type == null ? 'active' : ''}" href="전체">전체</a>
-                        </li>
+        				<!-- 🔽 이 줄 수정 -->
+        					<a class="nav-link ${empty pageMaker.cri.post_type ? 'active' : ''}" href="전체">전체</a>
+    					</li>
+    					
                         <li class="nav-item">
                             <a class="nav-link ${pageMaker.cri.post_type == '공지' ? 'active' : ''}" href="공지">공지</a>
                         </li>
@@ -122,7 +194,7 @@
                     
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-bordered">
-                            <thead class="table-dark">
+                            <thead class="table-header-purple">
                                 <tr>
                                     <th style="width: 10%;">번호</th>
                                     <th style="width: 40%;">제목</th>
