@@ -26,6 +26,7 @@
         	margin-top: 100px; /* 원하는 만큼 조절 */
         	color: #4f46e5 !important; /* Tailwind indigo-600 */
     	}
+    	
     	/* 브랜드 로고 스타일 (인디고 색상으로 변경) */
 		.navbar-brand {
 			font-weight: 800;
@@ -88,7 +89,76 @@
     		border-color: #4f46e5 !important;
     		box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important;
 		}
+		
+		/* 게시글 제목 링크 색을 보라색으로 통일 */
+		.post-list-card .move {
+    		color: #4f46e5 !important;
+		}
+
+		/* 마우스 올렸을 때 살짝 진한 보라색 */
+		.post-list-card .move:hover {
+    		color: #4338ca !important;
+		}
+
+		/* 🔹 헤더 영역 (home.jsp의 동아리 검색 헤더처럼) */
+		.club-info-card-header {
+    		background-color: #f1f5f9;        /* 연한 회색 배경 */
+    		border-bottom: 1px solid #e2e8f0;
+    		border-top-left-radius: 1rem !important;
+    		border-top-right-radius: 1rem !important;
+    		padding: 1rem 1.5rem;
+		}
+
+		/* 🔹 body 영역 패딩 */
+		.club-info-card-body {
+    		padding: 1.25rem 1.75rem;
+		}
+
+		/* 🔹 동아리 소개 제목 (텍스트는 검정색) */
+		.club-info-title {
+    		font-weight: 700;
+    		color: #111827 !important;        /* 거의 검정색 (slate-900 느낌) */
+    		display: flex;
+    		align-items: center;
+    		gap: 0.5rem;
+    		margin-bottom: 0;
+		}	
 	
+		/* 🔹 이 페이지의 주요 카드들은 전부 둥글게 통일 */
+		.club-info-card,
+		.post-list-card,
+		.club-manage-card {
+    		border-radius: 1rem !important;  /* 바깥 모서리 크게 둥글게 */
+    		overflow: hidden;                /* 안쪽 내용도 둥근 모서리 안으로 잘리게 */
+    
+    		border: none !important;
+    		box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),
+        	        0 4px 6px -2px rgba(0,0,0,0.05) !important;
+    	}
+
+
+		/* 🔹 게시물 목록 헤더 스타일 (home.jsp 헤더와 동일 느낌) */
+		.post-list-header {
+		    background-color: #f1f5f9 !important;        /* 연회색 */
+    		border-bottom: 1px solid #e2e8f0 !important; /* 연한 테두리 */
+    		padding: 1rem 1.5rem !important;
+    		border-top-left-radius: 1rem !important;
+    		border-top-right-radius: 1rem !important;
+    		display: flex;
+    		align-items: center;
+    		justify-content: space-between;
+		}
+
+		/* 제목 스타일 (검정색) */
+		.post-list-title {
+    		font-weight: 700;
+    		font-size: 1.1rem;
+    		color: #111827 !important;  /* 포인트가 아니라 검정 */
+    		display: flex;
+    		align-items: center;
+    		gap: 0.4rem;
+		}
+
     </style>
 </head>
 <body>
@@ -100,32 +170,40 @@
     	<c:out value="${clubName}" default="게시판 목록"/>
     </h1>
 
-    
-    <!-- 🔹 동아리 소개 / 설명 카드 -->
-    <c:if test="${not empty clubInfo.introduction or not empty clubInfo.description}">
-        <div class="row mb-4">
-            <div class="col-lg-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <h5 class="card-title text-secondary mb-2">
-                            <i class="bi bi-info-circle-fill me-1"></i> 동아리 소개
-                        </h5>
+	<c:if test="${not empty clubInfo.introduction or not empty clubInfo.description}">
+    	<div class="row mb-4">
+        	<div class="col-lg-12">
+            	<!-- ✅ 홈 화면처럼 헤더/바디 분리된 카드 -->
+            	<div class="card club-info-card">
+                
+                	<!-- 🔹 헤더 영역 -->
+                	<div class="club-info-card-header">
+                    	<h5 class="club-info-title">
+                        	<span class="club-info-icon">
+                            	<i class="bi bi-info-circle-fill"></i>
+                        	</span>
+                        	동아리 소개
+                    	</h5>
+                	</div>
+                
+                	<!-- 🔹 바디 영역 -->
+                	<div class="club-info-card-body">
+                    	<c:if test="${not empty clubInfo.introduction}">
+                        	<p class="card-text mb-0">
+                            	<c:out value="${clubInfo.introduction}"/>
+                        	</p>
+                    	</c:if>
+                	</div>
+            	</div>
+        	</div>
+    	</div>
+	</c:if>
 
-                        <!-- 상세 소개글 -->
-                        <c:if test="${not empty clubInfo.introduction}">
-                            <p class="card-text mb-0">
-                                <c:out value="${clubInfo.introduction}"/>
-                            </p>
-                        </c:if>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </c:if>
-    
+
+
     <div class="row mb-4">
         <div class="col-lg-12">
-            <div class="card shadow-sm p-3 mb-3">
+            <div class="card shadow-sm p-3 mb-3 club-manage-card">
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <c:if test="${not empty sessionScope.user_email and sessionScope.user_email != clubInfo.leader_email}">
                         <a href="../application/apply?club_id=<c:out value="${pageMaker.cri.club_id}"/>" class="btn btn-sm btn-outline-success">
@@ -163,12 +241,16 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card shadow post-list-card">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 text-secondary">게시물 목록</h5>
-                    <button id='regBtn' type="button" class="btn btn-primary btn-sm">
-                        <i class="bi bi-pencil-fill me-1"></i> 새 글 등록
-                    </button>
-                </div>
+				<div class="post-list-header">
+    				<h5 class="post-list-title">
+        				<i class="bi bi-list-ul"></i>
+        					게시물 목록
+    				</h5>
+    				<button id='regBtn' type="button" class="btn btn-primary btn-sm">
+        				<i class="bi bi-pencil-fill me-1"></i> 새 글 등록
+    				</button>
+				</div>
+
 
                 <div class="card-body">
 

@@ -308,12 +308,15 @@
 			    </c:if>
 			</div>
 		
-		<footer class="text-white-50 py-4 mt-5">
+<!--  
+	<footer class="text-white-50 py-4 mt-5">
 		<div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
 			<p class="mb-2 mb-md-0">&copy; 2025 Campus Club Information System</p>
 			<p class="mb-0">현재 시간: ${serverTime}.</P>
 		</div>
 	</footer>
+-->
+	
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	<script>
 		// Lucide Icons 라이브러리를 사용하여 아이콘 렌더링을 시도합니다. (Bootstrap 환경에서는 작동하지 않을 수 있으나 디자인 요소로 유지)

@@ -10,9 +10,104 @@
     <title>게시글 등록</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<style>
+		/* ==========================================
+   		🔥 전체 디자인 보라색(Indigo) 톤 통일
+  		 ========================================== */
+
+		/* 페이지 제목 */
+		h1.text-primary {
+    		color: #4f46e5 !important;
+    		margin-top: 70px; /* 원하는 만큼 조절 */
+    		font-weight: 800;
+		}
+
+		/* 카드 전체 스타일 */
+		.card {
+    		border: none !important;
+    		border-radius: 1rem !important;
+    		box-shadow:
+        		0 10px 15px -3px rgba(0, 0, 0, 0.10),
+        		0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+		}
+
+		/* 카드 헤더 보라색 */
+		.card-header.bg-primary {
+    		background-color: #4f46e5 !important;
+    		border-radius: 1rem 1rem 0 0 !important;
+		}
+
+		/* 기본 primary 버튼 */
+		.btn-primary {
+    		background-color: #4f46e5 !important;
+    		border-color: #4f46e5 !important;
+		}
+		
+		.btn-primary:hover,
+		.btn-primary:focus {
+    		background-color: #4338ca !important;
+    		border-color: #4338ca !important;
+		}
+
+		/* secondary 버튼색도 살짝 보라톤 */
+		.btn-secondary {
+    		background-color: #6b7280 !important;
+    		border-color: #6b7280 !important;
+		}
+		.btn-secondary:hover {
+    		background-color: #4b5563 !important;
+		}
+
+		/* nav pill 탭 기본 글색 = 보라 */
+		.nav-pills .nav-link {
+    		color: #4f46e5 !important;
+    		border-radius: 8px;
+    		font-weight: 600;
+		}
+
+		/* 활성 탭 = 보라 배경 + 흰 글씨 */
+		.nav-pills .nav-link.active {
+    		background-color: #4f46e5 !important;
+    		color: #ffffff !important;
+    		font-weight: 700;
+		}
+
+		/* hover 시 연보라 */
+		.nav-pills .nav-link:hover {
+    		background-color: rgba(79, 70, 229, 0.15) !important;
+		}
+
+		/* disabled 탭 */
+		.nav-pills .disabled {
+    		color: #9ca3af !important;
+    		background-color: transparent !important;
+    		cursor: not-allowed !important;
+    		pointer-events: none;
+		}
+
+		/* input, textarea 포커스 시 보라 그림자 */
+		.form-control:focus {
+    		border-color: #4f46e5 !important;
+    		box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important;
+		}
+
+		/* 파일 업로드 focus */
+		.form-control[type='file']:focus {
+    		border-color: #4f46e5 !important;
+    		box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important;
+		}
+
+		/* 경고 모달 헤더 보라색 */
+		.modal-header.bg-warning {
+    		background-color: #4f46e5 !important;
+    		color: #fff !important;
+		}
+	</style>
+
 </head>
 <body>
 
+<%@include file="../includes/header.jsp" %>
 <div class="container my-5">
 
     <div class="row">

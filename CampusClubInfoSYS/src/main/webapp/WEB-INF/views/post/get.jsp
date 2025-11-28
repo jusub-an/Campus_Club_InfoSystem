@@ -21,12 +21,63 @@
             margin-top: 5px;
             margin-bottom: 5px;
         }
+        
+    	/* 페이지 타이틀 보라색 */
+    	h1.page-title {
+        	color: #4f46e5 !important;
+    	}
+
+    	/* 초록(success) 계열을 보라색으로 덮어쓰기 */
+    	.text-success {
+    		font-weight: 800;
+    		margin-top: 70px; /* 원하는 만큼 조절 */
+        	color: #4f46e5 !important;
+    	}
+    	
+    	.bg-success {
+        	background-color: #4f46e5 !important;
+        	border-color: #4f46e5 !important;
+    	}
+    	
+		/* 더보기(...) 버튼 */
+		.btn-more-actions {
+    		padding: 0.15rem 0.5rem;
+    		font-size: 0.8rem;
+    		line-height: 1.1;
+		}
+
+		/* 수정/삭제 버튼 묶음 */
+		.reply-actions {
+    		display: flex;
+    		align-items: center;
+    		gap: 0.4rem;   /* 버튼 사이 간격 */
+		}
+
+		.reply-actions .btn-sm {
+    		padding: 0.35rem 0.75rem;   /* 더 높고 넓게 */
+    		font-size: 0.9rem;          /* 답글 버튼과 유사한 크기 */
+    		border-radius: 6px;
+		}
+		
+		/* 🔹 이 페이지의 주요 카드들은 전부 둥글게 통일 */
+.club-info-card,
+.post-list-card,
+.club-manage-card {
+    border-radius: 1rem !important;  /* 바깥 모서리 크게 둥글게 */
+    overflow: hidden;                /* 안쪽 내용도 둥근 모서리 안으로 잘리게 */
+    
+    border: none !important;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),
+                0 4px 6px -2px rgba(0,0,0,0.05) !important;
+}
+		
     </style>
 </head>
 <body>
 
+<%@include file="../includes/header.jsp" %>
 <div class="container my-5">
-
+    
     <div class="row">
         <div class="col-12">
             <h1 class="text-center mb-5 text-success">게시글 상세</h1>
@@ -34,8 +85,8 @@
     </div>
     
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg mb-4">
+        <div class="col-lg-16">
+            <div class="card shadow-lg mb-4 club-info-card">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">
                         <i class="bi bi-file-text-fill me-2"></i> 
@@ -93,7 +144,7 @@
                 </div>
             </div>
             
-            <div class="card shadow-sm mb-4">
+            <div class="card shadow-sm mb-4 post-list-card">
                 <div class="card-header bg-primary text-white">
                     <i class="bi bi-chat-dots-fill me-1"></i> 새 댓글
                 </div>
@@ -119,7 +170,7 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm club-manage-card">
                 <div class="card-header bg-secondary text-white">
                     <i class="bi bi-chat-square-text-fill me-1"></i> 댓글 목록
                 </div>
@@ -341,19 +392,35 @@ $(document).ready(function() {
         
         str += "<p class='reply-content mt-2'>" + reply.content + "</p>";
         
-        str += "<div class='d-flex gap-2 mb-2'>";
-        
-        // 답글 버튼
-        if (canReply()) { 
-            str += "<button class='btn btn-info btn-xs btn-show-reply-form'><i class='bi bi-reply-fill'></i> 답글</button>";
-        }
-        
-        // 수정/삭제 버튼
-        if (reply.author_email === loggedInUser) {
-            str += "<button class='btn btn-warning btn-xs btn-modify'><i class='bi bi-pencil-square'></i> 수정</button>";
-            str += "<button class='btn btn-danger btn-xs btn-delete'><i class='bi bi-trash-fill'></i> 삭제</button>";
-        }
-        str += "</div>";
+        // ✅ 여기부터 버튼 영역
+        str += "<div class='d-flex mb-2 align-items-center'>";
+
+		/* 🔹 왼쪽: 답글 버튼 (항상 보이게) */
+		if (canReply()) { 
+    		str += "<button class='btn btn-info btn-sm me-2 btn-show-reply-form'>";
+    		str += "  <i class='bi bi-reply-fill'></i> 답글";
+    		str += "</button>";
+		}
+
+		/* 🔹 오른쪽: 더보기 (...) + 수정/삭제 (토글) */
+		if (reply.author_email === loggedInUser) {
+    		str += "<div class='ms-auto d-flex align-items-center'>";
+    		str += "  <button type='button' class='btn btn-outline-secondary btn-sm btn-more-actions'>";
+    		str += "    <i class='bi bi-three-dots'></i>";
+    		str += "  </button>";
+    		str += "  <div class='reply-actions d-none ms-2'>";
+    		str += "    <button class='btn btn-warning btn-sm btn-modify'>";
+    		str += "      <i class='bi bi-pencil-square'></i> 수정";
+    		str += "    </button>";
+    		str += "    <button class='btn btn-danger btn-sm btn-delete'>";
+    		str += "      <i class='bi bi-trash-fill'></i> 삭제";
+    		str += "    </button>";
+    		str += "  </div>";
+    		str += "</div>";
+		}
+
+		str += "</div>";
+
 
         // 답글 입력 폼 (숨김 상태)
         if (canReply()) {
@@ -415,17 +482,31 @@ $(document).ready(function() {
         // 댓글 내용
         str += "<p class='reply-content'>" + reply.content + "</p>";
         
-        str += "<div class='d-flex gap-2 mb-2'>";
-        
+        // ✅ 버튼 영역
+        str += "<div class='d-flex gap-2 mb-2 align-items-center'>";
+
         // 답글 버튼 (권한 체크)
         if (canReply()) { 
-            str += "<button class='btn btn-info btn-xs btn-show-reply-form'><i class='bi bi-reply-fill'></i> 답글</button>";
-        }
+        	str += "<button class='btn btn-info btn-sm me-2 btn-show-reply-form'>";
+            str += "  <i class='bi bi-reply-fill'></i> 답글";
+            str += "</button>";
+         }
         
         // 수정/삭제 버튼
         if (reply.author_email === loggedInUser) {
-            str += "<button class='btn btn-warning btn-xs btn-modify'><i class='bi bi-pencil-square'></i> 수정</button>";
-            str += "<button class='btn btn-danger btn-xs btn-delete'><i class='bi bi-trash-fill'></i> 삭제</button>";
+            str += "<div class='ms-auto d-flex align-items-center'>";
+            str += "  <button type='button' class='btn btn-outline-secondary btn-sm btn-more-actions'>";
+            str += "    <i class='bi bi-three-dots'></i>";
+            str += "  </button>";
+            str += "  <div class='reply-actions d-none ms-2'>";
+            str += "    <button class='btn btn-warning btn-sm btn-modify'>";
+            str += "      <i class='bi bi-pencil-square'></i> 수정";
+            str += "    </button>";
+            str += "    <button class='btn btn-danger btn-sm btn-delete'>";
+            str += "      <i class='bi bi-trash-fill'></i> 삭제";
+            str += "    </button>";
+            str += "  </div>";
+            str += "</div>";
         }
         str += "</div>";
 
@@ -536,6 +617,12 @@ $(document).ready(function() {
         operForm.find("input[name='post_id']").remove(); 
         operForm.attr("action", "/post/list"); 
         operForm.submit();
+    });
+    
+ 	// ⭐ 더보기(...) 클릭 시 수정/삭제 토글
+    replyList.on("click", ".btn-more-actions", function() {
+        var $actions = $(this).siblings(".reply-actions");
+        $actions.toggleClass("d-none");
     });
 }); 
 </script>
