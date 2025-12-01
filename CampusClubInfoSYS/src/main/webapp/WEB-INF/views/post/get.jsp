@@ -60,16 +60,43 @@
 		}
 		
 		/* 🔹 이 페이지의 주요 카드들은 전부 둥글게 통일 */
-.club-info-card,
-.post-list-card,
-.club-manage-card {
-    border-radius: 1rem !important;  /* 바깥 모서리 크게 둥글게 */
-    overflow: hidden;                /* 안쪽 내용도 둥근 모서리 안으로 잘리게 */
+		.club-info-card,
+		.post-list-card,
+		.club-manage-card {
+    		border-radius: 1rem !important;  /* 바깥 모서리 크게 둥글게 */
+    		overflow: hidden;                /* 안쪽 내용도 둥근 모서리 안으로 잘리게 */
     
-    border: none !important;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),
-                0 4px 6px -2px rgba(0,0,0,0.05) !important;
-}
+    		border: none !important;
+    		box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),
+                	0 4px 6px -2px rgba(0,0,0,0.05) !important;  
+         }
+         
+         /* 🔹 게시물 종류 배지 공통 스타일 */
+		.badge-post-type {
+    		color: #ffffff !important;   /* 글씨 흰색 고정 */
+    		font-weight: 600;
+		}
+
+		/* 공지 = 하늘색 (더 쨍한 sky-500) */
+		.badge-post-notice {
+    		background-color: #0ea5e9 !important;  /* sky-500 */
+		}
+
+		/* 자유 = 초록색 (더 진한 green-600) */
+		.badge-post-free {
+    		background-color: #16a34a !important;  /* green-600 */
+		}
+
+		/* 활동앨범 = 노란색 (더 선명한 yellow-400) */
+		.badge-post-album {
+    		background-color: #facc15 !important;  /* yellow-500 */
+		}
+
+		/* 문의 = 주황색 (더 쨍한 orange-500) */
+		.badge-post-qna {
+    		background-color: #f97316 !important;  /* orange-500 */
+		}
+         
 		
     </style>
 </head>
@@ -80,7 +107,7 @@
     
     <div class="row">
         <div class="col-12">
-            <h1 class="text-center mb-5 text-success">게시글 상세</h1>
+            <h1 class="text-center mb-5 text-success">게시물 상세</h1>
         </div>
     </div>
     
@@ -97,8 +124,40 @@
                     
                     <dl class="row mb-0">
                         <dt class="col-sm-3">게시물 종류</dt>
-                        <dd class="col-sm-9"><span class="badge bg-info"><c:out value="${post.post_type}"/></span></dd>
-                        
+						<dd class="col-sm-9">
+    						<c:choose>
+        						<c:when test="${post.post_type == '공지'}">
+            						<span class="badge badge-post-type badge-post-notice">
+                						<c:out value="${post.post_type}"/>
+            						</span>
+        						</c:when>
+
+        						<c:when test="${post.post_type == '자유'}">
+            						<span class="badge badge-post-type badge-post-free">
+                						<c:out value="${post.post_type}"/>
+            						</span>
+        						</c:when>
+
+        						<c:when test="${post.post_type == '활동앨범'}">
+            						<span class="badge badge-post-type badge-post-album">
+                						<c:out value="${post.post_type}"/>
+            						</span>
+        						</c:when>
+
+        						<c:when test="${post.post_type == '문의'}">
+            						<span class="badge badge-post-type badge-post-qna">
+                						<c:out value="${post.post_type}"/>
+            						</span>
+        						</c:when>
+
+        						<c:otherwise>
+            						<span class="badge badge-post-type bg-secondary">
+                						<c:out value="${post.post_type}"/>
+            						</span>
+        						</c:otherwise>
+    						</c:choose>
+						</dd>
+
                         <dt class="col-sm-3">작성자</dt>
                         <dd class="col-sm-9"><c:out value="${post.author_email }"/></dd>
 
@@ -136,9 +195,9 @@
                     
                     <div class="d-flex justify-content-end gap-2">
                         <c:if test="${sessionScope.user_email == post.author_email}">
-                            <button data-oper='modify' class="btn btn-warning text-dark"><i class="bi bi-pencil-square me-1"></i> Modify</button>
+                            <button data-oper='modify' class="btn btn-info text-white"><i class="bi bi-pencil-square me-1"></i> 수정 </button>
                         </c:if>
-                        <button data-oper='list' class="btn btn-info text-white"><i class="bi bi-list-columns-reverse me-1"></i> List</button>
+                        <button data-oper='list' class="btn btn-sm btn-outline-secondary"><i class="bi bi-list-columns-reverse me-1"></i> 게시물 목록 </button>
                     </div>
 
                 </div>

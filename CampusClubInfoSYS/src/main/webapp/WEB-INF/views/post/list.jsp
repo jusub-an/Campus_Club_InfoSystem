@@ -158,6 +158,32 @@
     		align-items: center;
     		gap: 0.4rem;
 		}
+		
+		/* 🔹 게시물 종류 배지 공통 스타일 */
+		.badge-post-type {
+    		color: #ffffff !important;   /* 글씨 흰색 고정 */
+    		font-weight: 600;
+		}
+
+		/* 공지 = 하늘색 (더 쨍한 sky-500) */
+		.badge-post-notice {
+    		background-color: #0ea5e9 !important;  /* sky-500 */
+		}
+
+		/* 자유 = 초록색 (더 진한 green-600) */
+		.badge-post-free {
+    		background-color: #16a34a !important;  /* green-600 */
+		}
+
+		/* 활동앨범 = 노란색 (더 선명한 yellow-400) */
+		.badge-post-album {
+    		background-color: #facc15 !important;  /* yellow-500 */
+		}
+
+		/* 문의 = 주황색 (더 쨍한 orange-500) */
+		.badge-post-qna {
+    		background-color: #f97316 !important;  /* orange-500 */
+		}
 
     </style>
 </head>
@@ -299,7 +325,44 @@
                                     </td>
                                     <td><c:out value="${post.author_email}" /></td>
                                     <td><fmt:formatDate pattern="yyyy-MM-dd" value="${post.created_date}" /></td>
+                                    <!--  
                                     <td><span class="badge text-bg-info"><c:out value="${post.post_type}" /></span></td>
+                                  	-->
+                                  	<td>
+    									<c:choose>
+        									<c:when test="${post.post_type == '공지'}">
+            									<span class="badge badge-post-type badge-post-notice">
+                									<c:out value="${post.post_type}" />
+            									</span>
+        									</c:when>
+
+        									<c:when test="${post.post_type == '자유'}">
+            									<span class="badge badge-post-type badge-post-free">
+                									<c:out value="${post.post_type}" />
+            									</span>
+        									</c:when>
+
+        									<c:when test="${post.post_type == '활동앨범'}">
+            									<span class="badge badge-post-type badge-post-album">
+                									<c:out value="${post.post_type}" />
+            									</span>
+        									</c:when>
+
+        									<c:when test="${post.post_type == '문의'}">
+            									<span class="badge badge-post-type badge-post-qna">
+                									<c:out value="${post.post_type}" />
+            									</span>
+        									</c:when>
+
+        									<c:otherwise>
+            								<!-- 혹시 예외 -->
+            									<span class="badge text-bg-secondary">
+                									<c:out value="${post.post_type}" />
+            									</span>
+        									</c:otherwise>
+    									</c:choose>
+									</td>
+                                  	
                                   </tr>
                                 </c:forEach>
                             </tbody>

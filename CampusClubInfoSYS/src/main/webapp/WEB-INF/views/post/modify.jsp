@@ -10,7 +10,72 @@
     <title>게시글 수정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Inter 폰트 + 배경 */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            background-color: #f8fafc; /* 연한 회색 배경 */
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 🔹 페이지 타이틀: text-warning → 보라색으로 재정의 */
+        .text-warning {
+        
+    		font-weight: 800;
+        	margin-top: 100px; /* 원하는 만큼 조절 */
+            color: #4f46e5 !important; /* indigo-600 */
+        }
+
+        /* 🔹 bg-warning 을 보라색 헤더 용도로 재활용 (이 페이지 한정) */
+        .bg-warning {
+            background-color: #4f46e5 !important;
+            border-color: #4f46e5 !important;
+            color: #ffffff !important;
+        }
+
+        /* 🔹 메인 카드 둥글게 + 그림자 (다른 페이지랑 통일) */
+        .post-edit-card {
+            border-radius: 1rem !important;
+            overflow: hidden;
+            border: none !important;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),
+                        0 4px 6px -2px rgba(0,0,0,0.05) !important;
+        }
+
+        /* 🔹 기본 primary 버튼을 보라색 계열로 통일 */
+        .btn-primary {
+            background-color: #4f46e5 !important;
+            border-color: #4f46e5 !important;
+        }
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #4338ca !important; /* 살짝 더 진한 보라 */
+            border-color: #4338ca !important;
+        }
+
+        /* 🔹 input/select 포커스 보라색 하이라이트 */
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important;
+        }
+
+        /* 🔹 nav-pills (게시판 선택 탭) 보라색 스타일 */
+        .nav-pills .nav-link {
+            color: #4f46e5 !important;
+            font-weight: 600;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+        }
+        .nav-pills .nav-link.disabled {
+            color: #9ca3af !important; /* 비활성은 회색 */
+        }
+    </style>
 </head>
+
+
 <body>
 
 
@@ -20,15 +85,15 @@
 
     <div class="row">
         <div class="col-12">
-            <h1 class="text-center mb-5 text-warning">게시글 수정</h1>
+            <h1 class="text-center mb-5 text-warning">게시물 수정</h1>
         </div>
     </div>
     
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card shadow-lg">
+            <div class="card shadow-lg post-edit-card">
                 <div class="card-header bg-warning text-dark text-center">
-                    <h5 class="mb-0">Post Modify</h5>
+                    <h5 class="mb-0">게시물</h5>
                 </div>
                 <div class="card-body">
 
@@ -136,9 +201,9 @@
                         </div>
                         
                         <div class="d-flex justify-content-end gap-2">
-                            <button type="submit" data-oper='modify' class="btn btn-warning text-dark"><i class="bi bi-pencil-square me-1"></i> Modify</button>
-                            <button type="submit" data-oper='remove' class="btn btn-danger"><i class="bi bi-trash-fill me-1"></i> Remove</button>
-                            <button type="submit" data-oper='list' class="btn btn-info text-white"><i class="bi bi-list-columns-reverse me-1"></i> List</button>
+                            <button type="submit" data-oper='modify' class="btn btn-info text-white"><i class="bi bi-pencil-square me-1"></i> 수정 </button>
+                            <button type="submit" data-oper='remove' class="btn btn-danger"><i class="bi bi-trash-fill me-1"></i> 삭제 </button>
+                            <button type="submit" data-oper='list' class="btn btn-outline-secondary"><i class="bi bi-list-columns-reverse me-1"></i> 목록 </button>
                         </div>
                     </form>
 
