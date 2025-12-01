@@ -18,22 +18,7 @@
             background-color: #f8fafc;
         }
 
-        /* 상단 네비게이션 (login / findId와 통일) */
-        .navbar-custom {
-            background-color: #ffffff !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                        0 2px 4px -2px rgba(0, 0, 0, 0.06);
-            border-bottom: 1px solid #e2e8f0;
-            padding-top: 0.5rem !important;
-            padding-bottom: 0.5rem !important;
-        }
-        .navbar-brand {
-            font-weight: 800;
-            color: #4f46e5 !important; /* indigo-600 */
-            letter-spacing: 0.5px;
-        }
-
-        /* 카드 스타일 (auth-card 재사용 느낌) */
+        /* 카드 스타일 */
         .auth-card {
             border-radius: 1.5rem;
             border: 1px solid #e2e8f0;
@@ -64,21 +49,19 @@
             border-color: #4338ca;
             color: #ffffff;
         }
+
+        /* input 포커스 스타일 */
+        .form-control:focus {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important;
+        }
     </style>
 </head>
 <body>
+    <%@include file="../includes/header.jsp" %>
 
-    <%-- 상단 네비게이션 바 --%>
-    <nav class="navbar navbar-expand-lg navbar-light navbar-custom fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="${pageContext.request.contextPath}/">
-                캠퍼스 동아리 정보시스템
-            </a>
-        </div>
-    </nav>
-
-    <%-- 메인 컨텐츠: 네비가 fixed-top이라 위쪽 여백 추가 --%>
-    <div class="container py-5" style="padding-top: 6rem !important;">
+    <%-- 메인 컨텐츠 --%>
+    <div class="container my-5 pt-5">
 
         <div class="row">
             <div class="col-12 text-center mb-4">

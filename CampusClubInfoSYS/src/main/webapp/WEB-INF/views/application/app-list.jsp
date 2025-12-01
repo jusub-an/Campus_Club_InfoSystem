@@ -10,14 +10,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        /* Inter 폰트 사용 (home.jsp와 통일) */
+        /* Inter 폰트 사용 */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             background-color: #f8fafc; /* Tailwind gray-50 */
             font-family: 'Inter', sans-serif;
         }
 
-        /* 상단 큰 카드 (home.jsp의 search-filter-card 느낌) */
+        /* 상단 큰 카드 */
         .manage-card {
             border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),

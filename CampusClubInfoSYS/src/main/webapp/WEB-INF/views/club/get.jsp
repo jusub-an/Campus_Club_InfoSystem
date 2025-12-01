@@ -90,13 +90,16 @@
             background-color: #4b5563;
             border-color: #4b5563;
         }
+        .form-label {
+    		font-weight: 600 !important;
+    		color: #374151 !important;
+		}
         
     </style>
 </head>
 <body>
 
-<div class="container my-5">
-	
+<div class="container my-5">	
 	<%@include file="../includes/header.jsp" %>
 	
     <div class="row">
@@ -109,7 +112,7 @@
         <div class="col-lg-8 col-md-10">
             <div class="card shadow-lg club-card">
                 <div class="card-header text-white text-center">
-                    <h5 class="mb-0">동아리 정보 수정: ${club.club_name}</h5>
+                    <h5 class="mb-0">${club.club_name}</h5>
                 </div>
                 <div class="card-body">
                     
@@ -117,7 +120,7 @@
                         <input type="hidden" name="club_id" value="${club.club_id}" />
 
                         <div class="mb-3">
-                            <label for="club_name" class="form-label">이름</label>
+                            <label for="club_name" class="form-label">동아리명</label>
                             <input type="text" class="form-control" id="club_name" name="club_name" value="${club.club_name}" required>
                         </div>
                         
