@@ -80,5 +80,24 @@
         FROM member 
         WHERE club_id = #{club_id} AND user_email = #{user_email}
     </select>
+    
+    <!-- 테스트 -->
+    <!-- 이미지 데이터만 따로 업데이트 -->
+	<update id="updateImage" parameterType="org.zerock.domain.ClubDTO">
+    	UPDATE club
+    	SET 
+        	club_img       = #{club_img, jdbcType=BLOB},
+        	club_img_type  = #{club_img_type},
+        	club_img_name  = #{club_img_name}
+    	WHERE club_id = #{club_id}
+	</update>
+
+	<!-- 이미지 데이터만 따로 조회 -->
+	<select id="getImage" parameterType="long" resultType="org.zerock.domain.ClubDTO">
+    	SELECT club_id, club_img, club_img_type, club_img_name
+    	FROM club
+    	WHERE club_id = #{club_id}
+	</select>
+	<!-- 여기까지 -->
 	
 </mapper>

@@ -98,5 +98,18 @@ public class ClubServiceImpl implements ClubService {
         }
         return mapper.checkMember(club_id, user_email) > 0;
     }
+	
+	// 테스트
+	@Override
+	public ClubDTO getClubImage(Long club_id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean updateClubImage(ClubDTO dto) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }
