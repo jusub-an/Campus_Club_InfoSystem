@@ -155,10 +155,12 @@
                             <textarea class="form-control" rows="6" name='content'><c:out value="${post.content}"/></textarea>
                         </div>
                         
+                        <!--  
                         <div class="mb-3">
                             <label class="form-label">작성자 (Writer)</label> 
                             <input type="text" class="form-control" name='writer' value='<c:out value="${post.author_email}"/>' readonly>            
                         </div>
+                        -->
                         
                         <div class="mb-4">
                             <label class="form-label">작성일 (RegDate)</label> 
