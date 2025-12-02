@@ -25,8 +25,4 @@ public interface ClubMapper {
                                     @Param("category") String category);
     
     public int checkMember(@Param("club_id") Long club_id, @Param("user_email") String user_email);
-    
-    // 테스트
-    ClubDTO getImage(Long club_id);
-    int updateImage(ClubDTO dto);
 }

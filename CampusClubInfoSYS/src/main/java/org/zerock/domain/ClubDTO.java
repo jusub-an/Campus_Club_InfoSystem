@@ -11,9 +11,4 @@ public class ClubDTO {
 	private String category; // 카테고리
 	private String introduction; // 소개글
 	private String leader_email; // 동아리 회장 이메일 (User 테이블 참조)
-	
-	// 테스트
-	private byte[] club_img;
-	private String club_img_type;
-	private String club_img_name;
 }
