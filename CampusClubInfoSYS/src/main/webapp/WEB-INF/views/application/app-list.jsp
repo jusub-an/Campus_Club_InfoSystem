@@ -136,6 +136,7 @@
                             <thead>
                                 <tr>
                                     <th>신청자 이메일</th>
+        							<th>신청자 이름</th>   <%-- ✅ 추가 --%>
                                     <th>지원글</th>
                                     <th>신청일</th>
                                     <th class="text-center">상태</th>
@@ -149,6 +150,13 @@
                                                 <c:out value="${app.applicant_email}" />
                                             </span>
                                         </td>
+                                        
+                                        <td>
+            								<span class="fw-semibold">
+                								<c:out value="${app.name}" />
+            								</span>
+        								</td>
+        								
                                         <td style="max-width: 380px;">
                                             <span class="text-muted">
                                                 <c:out value="${app.applicant_text}" />
@@ -221,6 +229,7 @@
                                 <tr>
                                     <th>동아리 ID</th>
                                     <th>회원 이메일</th>
+                                    <th>회원 이름</th>   <%-- ✅ 추가 --%>
                                     <th class="text-center">관리</th>
                                 </tr>
                             </thead>
@@ -237,6 +246,15 @@
                                                 <c:out value="${mem.user_email}" />
                                             </span>
                                         </td>
+                                        
+                                        
+        								<!-- ✅ 회원 이름 -->
+        								<td>
+            								<span class="fw-semibold">
+                								<c:out value="${mem.name}" />
+            								</span>
+        								</td>
+                                        
                                         <td class="text-center">
                                             <form action="<c:url value='/application/expel' />" method="post" class="d-inline">
                                                 <input type="hidden" name="club_id" value="${mem.club_id}">

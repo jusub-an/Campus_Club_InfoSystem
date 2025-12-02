@@ -11,4 +11,7 @@ public class ApplicationDTO {
     private String applicant_email;
     private String applicant_text;
     private Date applied_at;
+    
+    // ✅ 신청자 이름(또는 닉네임) 추가
+    private String name;
 }
