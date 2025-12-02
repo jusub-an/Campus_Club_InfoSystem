@@ -1,8 +1,10 @@
 package org.zerock.controller;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ import lombok.extern.log4j.Log4j;
 @RequestMapping("/club/*")
 @AllArgsConstructor
 public class ClubController {
+	
 	private ClubService service; 
 	
 	// 등록 페이지 이동 	
@@ -62,6 +65,7 @@ public class ClubController {
 		model.addAttribute("list", service.getClubList()); 
 	} 
 	*/
+	
 	// 동아리 목록 페이지 
 	@GetMapping("/list") 
 	public void list(Model model, HttpSession session) {
@@ -105,12 +109,21 @@ public class ClubController {
 				// DB에 저장할 웹 경로 설정
 				club.setLogo_url("/resources/uploads/logos/" + saveName);
 				
+				// 로고 테스트
+				club.setClub_img(logoFile.getBytes());
+                club.setClub_img_type(logoFile.getContentType());
+                club.setClub_img_name(originalName);
+				
 			} catch (Exception e) {
 				log.error("File upload failed", e);
 			}
 		} else {
 			// 업로드된 파일이 없을 경우 기본 이미지 또는 null 설정
-			club.setLogo_url(null); // 또는 "/resources/images/default_logo.png"
+			club.setLogo_url(null);
+			// 로고 테스트
+			club.setClub_img(null);
+            club.setClub_img_type(null);
+            club.setClub_img_name(null);
 		}
 		
 		if (service.registerClub(club)) {

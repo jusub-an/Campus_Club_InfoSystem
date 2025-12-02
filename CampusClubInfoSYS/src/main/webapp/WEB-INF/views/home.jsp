@@ -163,7 +163,7 @@
 			background-color: #1e293b !important; /* slate-800 */
 		}
 		
-		/* 🔍 input(검색창) 보라색 포커스 */
+		/* input(검색창) 보라색 포커스 */
 		.form-control:focus {
     		border-color: #4f46e5 !important;
     		box-shadow: 0 0 0 0.15rem rgba(79, 70, 229, 0.25) !important; /* 연보라 그림자 */
@@ -254,17 +254,32 @@
 						<div class="col">
 							<div class="card club-card h-100 shadow-md">
 								<a href="<c:url value='/post/list?club_id=${club.club_id}' />" class="text-decoration-none text-dark">
-									<c:if test="${not empty club.logo_url}">
-										<img src="<c:url value='${club.logo_url}' />" 
-											alt="${club.club_name} 로고" class="club-card-img card-img-top" 
-											onerror="this.onerror=null;this.src='https://placehold.co/400x200/e2e8f0/64748b?text=로고+없음';"
-										/>
-									</c:if>
-									<c:if test="${empty club.logo_url}">
-										<div class="card-img-placeholder">
-											<span>로고 없음</span>
-										</div>
-									</c:if>
+									<!-- 로고 테스트 -->
+									<c:choose>
+                    					<%-- 1) DB BLOB 이미지가 있는 경우: /club/image로 가져오기 --%>
+                    					<c:when test="${not empty club.club_img}">
+                        					<img src="<c:url value='/club/image?club_id=${club.club_id}' />"
+                             					alt="${club.club_name} 로고"
+                             					class="club-card-img card-img-top"
+                             					onerror="this.onerror=null;this.src='https://placehold.co/400x200/e2e8f0/64748b?text=로고+없음';" />
+                    					</c:when>
+
+                    					<%-- 2) BLOB는 없지만, 예전 방식 logo_url이 있는 경우 (레거시 호환) --%>
+                    					<c:when test="${not empty club.logo_url}">
+                        					<img src="<c:url value='${club.logo_url}' />"
+                             					alt="${club.club_name} 로고"
+                             					class="club-card-img card-img-top"
+                             					onerror="this.onerror=null;this.src='https://placehold.co/400x200/e2e8f0/64748b?text=로고+없음';" />
+                    					</c:when>
+
+                    					<%-- 3) 둘 다 없으면: 플레이스홀더 --%>
+                    					<c:otherwise>
+                        					<div class="card-img-placeholder">
+                            					<span>로고 없음</span>
+                        					</div>
+                    					</c:otherwise>
+                					</c:choose>
+                					
 									<div class="card-body">
 										<h5 class="card-title">${club.club_name}</h5>
 										<p class="card-text">${club.description}</p>
