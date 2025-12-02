@@ -28,6 +28,7 @@
             r.comment_id, 
             r.post_id, 
             r.author_email, 
+            u.name AS author_name,         -- ⭐ 작성자 이름
             r.content, 
             r.created_date, 
             r.parent_comment_id,
@@ -40,6 +41,8 @@
         JOIN post p ON r.post_id = p.post_id
         JOIN club c ON p.club_id = c.club_id
         LEFT JOIN member m ON (p.club_id = m.club_id AND r.author_email = m.user_email)
+        LEFT JOIN users u ON r.author_email = u.user_email    -- ✅ users 테이블 JOIN
+        
         WHERE r.post_id = #{post_id}
         ORDER BY 
             COALESCE(r.parent_comment_id, r.comment_id),

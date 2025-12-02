@@ -159,7 +159,7 @@
 						</dd>
 
                         <dt class="col-sm-3">작성자</dt>
-                        <dd class="col-sm-9"><c:out value="${post.author_email }"/></dd>
+                        <dd class="col-sm-9"><c:out value="${post.author_name }"/></dd>
 
                         <dt class="col-sm-3">작성일</dt>
                         <dd class="col-sm-9"><fmt:formatDate value="${post.created_date}" pattern="yyyy-MM-dd HH:mm:ss"/></dd>
@@ -445,7 +445,9 @@ $(document).ready(function() {
         if (reply.parent_comment_id != null) {
             str += "<i class='bi bi-arrow-return-right text-secondary me-1'></i>";
         }
-        str += "<strong>" + reply.author_email + "</strong>" + roleBadge;
+        var displayName = reply.author_name ? reply.author_name : reply.author_email;
+        str += "<strong>" + displayName + "</strong>" + roleBadge;
+        
         str += "<small class='float-end text-muted'>" + displayTime(reply.created_date) + "</small>"; 
         str += "</div>";
         
@@ -534,7 +536,9 @@ $(document).ready(function() {
             roleBadge = " <span class='badge rounded-pill bg-secondary'>비회원</span>";
         }
         
-        str += "<strong>" + reply.author_email + "</strong>" + roleBadge;
+        var displayName = reply.author_name ? reply.author_name : reply.author_email;
+        str += "<strong>" + displayName + "</strong>" + roleBadge;
+
         
         str += "<small class='float-end text-muted'>" + displayTime(reply.created_date) + "</small>"; 
         

@@ -323,7 +323,7 @@
                                             &nbsp;<span class="badge text-bg-secondary">[<c:out value="${post.reply_cnt}"/>]</span>
                                         </c:if>
                                     </td>
-                                    <td><c:out value="${post.author_email}" /></td>
+                                    <td><c:out value="${post.author_name}" /></td>
                                     <td><fmt:formatDate pattern="yyyy-MM-dd" value="${post.created_date}" /></td>
                                     <!--  
                                     <td><span class="badge text-bg-info"><c:out value="${post.post_type}" /></span></td>
