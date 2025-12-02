@@ -309,7 +309,7 @@ $(document).ready(function() {
             });
         }
     });
-    
+     
     // 카테고리 탭 클릭 이벤트
     $(".nav-pills a").on("click", function(e) {
         e.preventDefault(); 
