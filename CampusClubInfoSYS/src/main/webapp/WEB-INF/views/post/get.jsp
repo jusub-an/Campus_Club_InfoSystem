@@ -166,9 +166,30 @@
                     </dl>
                     <hr>
                     
-                    <div class="mb-4 p-3 border rounded bg-light">
-                        <p style="white-space: pre-wrap;"><c:out value="${post.content}" /></p>
-                    </div>
+                    <div class="mb-4">
+					    <!-- ⭐️ 이미지 파일이 있으면 본문 상단에 표시 -->
+					    <c:if test="${not empty post.attachList}">
+					        <div class="post-images mb-4 text-center">
+					            <c:forEach items="${post.attachList}" var="file">
+					                <!-- 파일명으로 확장자 체크 (간단하게) -->
+					                <c:set var="fname" value="${file.file_name.toLowerCase()}" />
+					                <c:if test="${fname.endsWith('.jpg') or fname.endsWith('.png') or fname.endsWith('.jpeg') or fname.endsWith('.gif')}">
+					                    
+					                    <!-- ⭐️ 원본 이미지 출력 (type 파라미터 없음) -->
+					                    <img src="/post/download?file_id=${file.file_id}" 
+					                         class="img-fluid rounded shadow-sm mb-3" 
+					                         style="max-width: 100%; max-height: 600px;">
+					                    <br>
+					                    
+					                </c:if>
+					            </c:forEach>
+					        </div>
+					    </c:if>
+					
+					    <div class="p-3 border rounded bg-light">
+					        <p style="white-space: pre-wrap;"><c:out value="${post.content}" /></p>
+					    </div>
+					</div>
 
                     <div class="mb-4">
                         <h6 class="text-secondary mb-2"><i class="bi bi-paperclip me-1"></i> 첨부파일</h6>

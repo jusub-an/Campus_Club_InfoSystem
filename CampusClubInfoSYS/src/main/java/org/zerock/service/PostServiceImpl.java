@@ -96,8 +96,7 @@ public class PostServiceImpl implements PostService {
             try {
                 // 실제 파일 저장
                 File saveFile = new File(uploadPath, saveFileName);
-                multipartFile.transferTo(saveFile);
-                
+                multipartFile.transferTo(saveFile);                
                 // 4. File 테이블에 파일 정보 등록
                 fileMapper.insert(fileVO);
 
@@ -204,10 +203,20 @@ public class PostServiceImpl implements PostService {
 	}
 	
 	@Override
-	public List<PostVO> getList(Criteria cri) {
-		log.info("getList..........");
-		return mapper.getListWithPaging(cri);
-	}
+    public List<PostVO> getList(Criteria cri) {
+        log.info("getList..........");
+        List<PostVO> list = mapper.getListWithPaging(cri);
+        
+        // ⭐️ 리스트에 썸네일용 대표 파일 정보 채우기
+        for (PostVO post : list) {
+            // 해당 게시글의 파일 목록 가져오기 (이미 Mapper에서 정렬되어 있음: 대표가 0번)
+            List<FileVO> files = fileMapper.findByPostId(post.getPost_id());
+            if (files != null && !files.isEmpty()) {
+                post.setAttachList(files); // 전체를 넣거나, 대표 1개만 넣어도 됨
+            }
+        }
+        return list;
+    }
 	
 	@Override
     public int getTotal(Criteria cri) {

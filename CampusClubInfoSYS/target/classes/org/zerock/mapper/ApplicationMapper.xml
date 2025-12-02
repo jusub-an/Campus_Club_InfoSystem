@@ -4,9 +4,26 @@
  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.zerock.mapper.ApplicationMapper">
 	<!-- 동아리 가입 신청 SQL -->
+	<!--  
 	<select id="getApplyList" resultType="org.zerock.domain.ApplicationDTO">
 		select * from Application where club_id = #{club_id}
 	</select>
+	-->
+	
+	<select id="getApplyList" resultType="org.zerock.domain.ApplicationDTO">
+    	SELECT 
+        	a.app_id,
+        	a.club_id,
+        	a.applicant_email,
+        	a.applicant_text,
+        	a.applied_at,
+        	u.name AS name   <!-- ✅ DTO의 name 필드로 매핑 -->
+    	FROM Application a
+    	JOIN users u
+      	ON a.applicant_email = u.user_email
+    	WHERE a.club_id = #{club_id}
+	</select>
+	
     
 	<insert id="insert">
 		INSERT INTO Application (club_id, applicant_email, applicant_text, applied_at)
@@ -34,9 +51,23 @@
     </delete>
     
 	<!-- 동아리 회원 SQL -->
+	<!--  
 	<select id="getMemberList" resultType="org.zerock.domain.MemberDTO">
 		select * from Member where club_id = #{club_id}
 	</select>
+	-->
+	<select id="getMemberList" resultType="org.zerock.domain.MemberDTO">
+    	SELECT 
+        	m.member_id,
+        	m.club_id,
+        	m.user_email,
+        	u.name AS name   <!-- ✅ MemberDTO의 name 필드 -->
+    	FROM Member m
+    	JOIN users u
+    	  ON m.user_email = u.user_email
+    	WHERE m.club_id = #{club_id}
+	</select>
+	
 	
     <insert id="insertMember">
         INSERT INTO Member (club_id, user_email)

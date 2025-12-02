@@ -20,8 +20,10 @@
     </insert>
     
     <select id="findByPostId" resultType="org.zerock.domain.FileVO">
-        SELECT * FROM post_file 
+        SELECT file_id, post_id, file_name, storage_path
+        FROM post_file 
         WHERE post_id = #{post_id}
+        ORDER BY file_id ASC 
     </select>
     
     <select id="getFile" resultType="org.zerock.domain.FileVO">

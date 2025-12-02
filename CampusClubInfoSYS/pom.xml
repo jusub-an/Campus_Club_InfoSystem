@@ -75,6 +75,13 @@
 		    <artifactId>commons-io</artifactId>
 		    <version>2.11.0</version> 
 	    </dependency>
+	    
+	    <!-- Thumbnailator: 썸네일 생성 라이브러리 -->
+		<dependency>
+		    <groupId>net.coobird</groupId>
+		    <artifactId>thumbnailator</artifactId>
+		    <version>0.4.14</version>
+		</dependency>
 		
 		<!-- Logging -->
 		<dependency>

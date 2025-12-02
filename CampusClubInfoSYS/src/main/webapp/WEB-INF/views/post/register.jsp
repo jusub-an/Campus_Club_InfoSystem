@@ -102,6 +102,52 @@
     		background-color: #4f46e5 !important;
     		color: #fff !important;
 		}
+		.upload-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+	    }
+	    /* 이미지 미리보기 스타일  */
+	    .preview-item {
+	        position: relative;
+	        width: 150px;
+	        height: 150px;
+	        border: 1px solid #ddd;
+	        border-radius: 5px;
+	        overflow: hidden;
+	    }
+	    .preview-img {
+	        width: 100%;
+	        height: 100%;
+	        object-fit: cover;
+	    }
+	    .preview-radio {
+	        position: absolute;
+	        top: 5px;
+	        left: 5px;
+	        z-index: 10;
+	        transform: scale(1.5);
+	    }
+	    .preview-label {
+	        position: absolute;
+	        top: 0;
+	        left: 0;
+	        width: 100%;
+	        height: 100%;
+	        cursor: pointer;
+	        background: rgba(0,0,0,0.3);
+	        opacity: 0;
+	        transition: opacity 0.2s;
+	    }
+	    .preview-item:hover .preview-label {
+	        opacity: 1;
+	    }
+	    .preview-radio:checked + .preview-label {
+	        background: rgba(79, 70, 229, 0.2); /* 보라색 틴트 */
+	        border: 2px solid #4f46e5;
+	        opacity: 1;
+	    }
 	</style>
 
 </head>
@@ -162,7 +208,7 @@
                         </ul>
                         
                         </div>
-
+             
                     <form role="form" id="registerForm" action="/post/register" method="post" enctype="multipart/form-data">
                         
                         <input type="hidden" name="club_id" value="<c:out value='${club_id}'/>">
@@ -238,7 +284,32 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-
+	
+	$("#uploadFiles").on("change", function(e) {
+        var files = e.target.files;
+        var $container = $("#imagePreview");
+        $container.empty();
+        
+        if (files.length > 0) {
+            Array.from(files).forEach((file, index) => {
+                if (!file.type.startsWith("image/")) return;
+                
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var isChecked = (index === 0) ? "checked" : ""; // 첫 번째 파일 기본 선택
+                    
+                    var html = `
+                        <div class="preview-item">
+                            <img src="\${e.target.result}" class="preview-img">
+                        </div>
+                    `;
+                    $container.append(html);
+                }
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+    
     // 카테고리 탭 클릭 이벤트
     $(".nav-pills a").on("click", function(e) {
         e.preventDefault(); 

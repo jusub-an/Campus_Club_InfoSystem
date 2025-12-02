@@ -264,6 +264,8 @@
         </div>
     </div>
     
+    
+    
     <div class="row">
         <div class="col-lg-12">
             <div class="card shadow post-list-card">
@@ -300,74 +302,120 @@
                         </li>
                     </ul>
                     
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover table-bordered">
-                            <thead class="table-header-purple">
-                                <tr>
-                                    <th style="width: 10%;">번호</th>
-                                    <th style="width: 40%;">제목</th>
-                                    <th style="width: 10%;">작성자</th>
-                                    <th style="width: 15%;">작성일</th>
-                                    <th style="width: 15%;">종류</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="${list}" var="post">
-                                  <tr>
-                                    <td><c:out value="${post.post_id}" /></td>
-                                    <td>
-                                        <a class='move text-decoration-none fw-bold' href='<c:out value="${post.post_id}"/>'>
-                                            <c:out value="${post.title}"/>
-                                        </a>
-                                        <c:if test="${post.reply_cnt > 0}">
-                                            &nbsp;<span class="badge text-bg-secondary">[<c:out value="${post.reply_cnt}"/>]</span>
-                                        </c:if>
-                                    </td>
-                                    <td><c:out value="${post.author_name}" /></td>
-                                    <td><fmt:formatDate pattern="yyyy-MM-dd" value="${post.created_date}" /></td>
-                                    <!--  
-                                    <td><span class="badge text-bg-info"><c:out value="${post.post_type}" /></span></td>
-                                  	-->
-                                  	<td>
-    									<c:choose>
-        									<c:when test="${post.post_type == '공지'}">
-            									<span class="badge badge-post-type badge-post-notice">
-                									<c:out value="${post.post_type}" />
-            									</span>
-        									</c:when>
-
-        									<c:when test="${post.post_type == '자유'}">
-            									<span class="badge badge-post-type badge-post-free">
-                									<c:out value="${post.post_type}" />
-            									</span>
-        									</c:when>
-
-        									<c:when test="${post.post_type == '활동앨범'}">
-            									<span class="badge badge-post-type badge-post-album">
-                									<c:out value="${post.post_type}" />
-            									</span>
-        									</c:when>
-
-        									<c:when test="${post.post_type == '문의'}">
-            									<span class="badge badge-post-type badge-post-qna">
-                									<c:out value="${post.post_type}" />
-            									</span>
-        									</c:when>
-
-        									<c:otherwise>
-            								<!-- 혹시 예외 -->
-            									<span class="badge text-bg-secondary">
-                									<c:out value="${post.post_type}" />
-            									</span>
-        									</c:otherwise>
-    									</c:choose>
-									</td>
-                                  	
-                                  </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
+                    <c:choose>
+					    <%-- ⭐️ [CASE 1] '활동앨범' 탭일 때는 카드형(Grid) 레이아웃 --%>
+					    <c:when test="${pageMaker.cri.post_type == '활동앨범'}">
+					        <div class="row row-cols-1 row-cols-md-3 g-4">
+					            <c:forEach items="${list}" var="post">
+					                <div class="col">
+					                    <div class="card h-100 shadow-sm post-list-card">
+					                        
+					                        <div style="height: 200px; overflow: hidden; background-color: #f1f5f9; position: relative;">
+					                            <a href='<c:out value="${post.post_id}"/>' class="move">
+					                                <c:choose>
+					                                    <%-- 첨부파일 목록(attachList)이 있고, 첫 번째 파일이 존재하면 썸네일 출력 --%>
+					                                    <c:when test="${not empty post.attachList and not empty post.attachList[0]}">
+					                                        <%-- Controller의 /display?type=thumb 호출 --%>
+					                                        <img src="/post/display?file_id=${post.attachList[0].file_id}&type=thumb" 
+					                                             class="card-img-top" 
+					                                             style="width: 100%; height: 100%; object-fit: cover;"
+					                                             onerror="this.src='https://placehold.co/400x300?text=No+Image'"> 
+					                                    </c:when>
+					                                    <c:otherwise>
+					                                        <%-- 이미지가 없을 경우 대체 아이콘 --%>
+					                                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+					                                            <i class="bi bi-image" style="font-size: 3rem;"></i>
+					                                        </div>
+					                                    </c:otherwise>
+					                                </c:choose>
+					                            </a>
+					                        </div>
+					                        
+					                        <div class="card-body">
+					                            <h5 class="card-title text-truncate">
+					                                <a class='move text-decoration-none text-dark' href='<c:out value="${post.post_id}"/>'>
+					                                    <c:out value="${post.title}"/>
+					                                </a>
+					                                <%-- 댓글 수 표시 --%>
+					                                <c:if test="${post.reply_cnt > 0}">
+					                                    <span class="badge bg-secondary rounded-pill" style="font-size: 0.7em;">
+					                                        <c:out value="${post.reply_cnt}"/>
+					                                    </span>
+					                                </c:if>
+					                            </h5>
+					                            <p class="card-text text-muted small mt-2">
+					                                <i class="bi bi-person-fill me-1"></i> <c:out value="${post.author_name}"/><br>
+					                                <i class="bi bi-calendar-event me-1"></i> <fmt:formatDate pattern="yyyy-MM-dd" value="${post.created_date}" />
+					                            </p>
+					                        </div>
+					                    </div>
+					                </div>
+					            </c:forEach>
+					        </div>
+					        
+					        <%-- 게시글이 하나도 없을 때 안내 메시지 --%>
+					        <c:if test="${empty list}">
+					            <div class="text-center py-5 text-muted">
+					                <i class="bi bi-exclamation-circle display-4"></i>
+					                <p class="mt-3">등록된 활동 앨범이 없습니다.</p>
+					            </div>
+					        </c:if>
+					    </c:when>
+					    
+					    <%-- ⭐️ [CASE 2] 그 외(전체, 공지, 자유, 문의 등)는 기존 테이블(Table) 레이아웃 --%>
+					    <c:otherwise>
+					        <div class="table-responsive">
+					            <table class="table table-striped table-hover table-bordered">
+					                <thead class="table-header-purple">
+					                    <tr>
+					                        <th style="width: 10%;">번호</th>
+					                        <th style="width: 40%;">제목</th>
+					                        <th style="width: 10%;">작성자</th>
+					                        <th style="width: 15%;">작성일</th>
+					                        <th style="width: 15%;">종류</th>
+					                    </tr>
+					                </thead>
+					                <tbody>
+					                    <c:forEach items="${list}" var="post">
+					                        <tr>
+					                            <td><c:out value="${post.post_id}" /></td>
+					                            <td>
+					                                <a class='move text-decoration-none fw-bold' href='<c:out value="${post.post_id}"/>'>
+					                                    <c:out value="${post.title}"/>
+					                                </a>
+					                                <c:if test="${post.reply_cnt > 0}">
+					                                    &nbsp;<span class="badge text-bg-secondary">[<c:out value="${post.reply_cnt}"/>]</span>
+					                                </c:if>
+					                            </td>
+					                            <td><c:out value="${post.author_name}" /></td>
+					                            <td><fmt:formatDate pattern="yyyy-MM-dd" value="${post.created_date}" /></td>
+					                            <td>
+					                                <%-- 게시글 종류 배지 (기존 코드 유지) --%>
+					                                <c:choose>
+					                                    <c:when test="${post.post_type == '공지'}">
+					                                        <span class="badge badge-post-type badge-post-notice"><c:out value="${post.post_type}" /></span>
+					                                    </c:when>
+					                                    <c:when test="${post.post_type == '자유'}">
+					                                        <span class="badge badge-post-type badge-post-free"><c:out value="${post.post_type}" /></span>
+					                                    </c:when>
+					                                    <c:when test="${post.post_type == '활동앨범'}">
+					                                        <span class="badge badge-post-type badge-post-album"><c:out value="${post.post_type}" /></span>
+					                                    </c:when>
+					                                    <c:when test="${post.post_type == '문의'}">
+					                                        <span class="badge badge-post-type badge-post-qna"><c:out value="${post.post_type}" /></span>
+					                                    </c:when>
+					                                    <c:otherwise>
+					                                        <span class="badge text-bg-secondary"><c:out value="${post.post_type}" /></span>
+					                                    </c:otherwise>
+					                                </c:choose>
+					                            </td>
+					                        </tr>
+					                    </c:forEach>
+					                </tbody>
+					            </table>
+					        </div>
+					    </c:otherwise>
+					</c:choose>
                     
                     <div class='row mt-4'>
                         <div class="col-lg-12">

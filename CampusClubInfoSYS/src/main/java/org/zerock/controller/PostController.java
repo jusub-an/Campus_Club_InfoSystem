@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.domain.PostVO;
 import org.zerock.service.ClubService;
@@ -32,6 +33,9 @@ import org.zerock.domain.Criteria;
 import org.zerock.domain.PageDTO;
 import org.zerock.domain.FileVO; // 추가
 import org.zerock.service.FileService;
+import net.coobird.thumbnailator.Thumbnailator; // 추가
+import java.io.FileOutputStream; // 추가
+import java.nio.file.Files; // 추가
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -380,4 +384,47 @@ public class PostController {
 				return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
+	 
+	 @GetMapping("/display")
+	    @ResponseBody
+	    public ResponseEntity<byte[]> getFile(@RequestParam("file_id") Long file_id, 
+	                                          @RequestParam(value="type", required=false) String type) {
+	        
+	        FileVO fileVO = fileService.getFile(file_id);
+	        if (fileVO == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        
+	        File file = new File(uploadFolder, fileVO.getStorage_path());
+	        if (!file.exists()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        
+	        ResponseEntity<byte[]> result = null;
+	        
+	        try {
+	            HttpHeaders header = new HttpHeaders();
+	            // MIME 타입 자동 처리 (image/jpeg, image/png 등)
+	            header.add("Content-Type", Files.probeContentType(file.toPath()));
+	            
+	            // ⭐️ 썸네일 요청인 경우
+	            if ("thumb".equals(type)) {
+	                // 썸네일 파일 이름 생성 (예: s_uuid_filename.jpg)
+	                String thumbName = file.getParent() + File.separator + "s_" + file.getName();
+	                File thumbFile = new File(thumbName);
+	                
+	                // 썸네일이 없으면 생성
+	                if (!thumbFile.exists()) {
+	                    // 정사각형(200x200) 썸네일 생성
+	                    Thumbnailator.createThumbnail(file, thumbFile, 200, 200);
+	                }
+	                // 썸네일 파일 전송
+	                result = new ResponseEntity<>(Files.readAllBytes(thumbFile.toPath()), header, HttpStatus.OK);
+	            } else {
+	                // 원본 파일 전송
+	                result = new ResponseEntity<>(Files.readAllBytes(file.toPath()), header, HttpStatus.OK);
+	            }
+	            
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
+	        return result;
+	    }
 }
