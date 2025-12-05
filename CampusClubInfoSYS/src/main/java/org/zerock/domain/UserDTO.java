@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
-	public String user_email;
-	public String password;
-	public String name;
-	public Long student_id;
-	public String user_type_code;
+	private String user_email;
+	private String password;
+	private String name;
+	private Long student_id;
+	private String user_type_code;
 }
