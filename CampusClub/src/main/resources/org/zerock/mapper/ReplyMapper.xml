@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.ReplyMapper">
+
+    <insert id="insert">
+        INSERT INTO reply (comment_id, post_id, author_email, content, created_date, parent_comment_id)
+        VALUES (seq_reply.nextval, #{post_id}, #{author_email}, #{content}, SYSDATE, #{parent_comment_id, jdbcType=INTEGER})
+        </insert>
+    
+    <select id="read" resultType="org.zerock.domain.ReplyVO">
+        SELECT * FROM reply WHERE comment_id = #{comment_id}
+    </select>
+    
+    <delete id="delete">
+        DELETE FROM reply WHERE comment_id = #{comment_id}
+    </delete>
+    
+    <update id="update">
+        UPDATE reply
+        SET content = #{content},
+            created_date = SYSDATE WHERE comment_id = #{comment_id}
+    </update>
+
+    <select id="getListByPostId" resultType="org.zerock.domain.ReplyVO">
+        SELECT 
+            r.comment_id, 
+            r.post_id, 
+            r.author_email, 
+            u.name AS author_name,         -- ⭐ 작성자 이름
+            r.content, 
+            r.created_date, 
+            r.parent_comment_id,
+            CASE 
+                WHEN c.leader_email = r.author_email THEN '동아리장'
+                WHEN m.user_email IS NOT NULL THEN '회원'
+                ELSE '비회원'
+            END AS writer_role
+        FROM reply r
+        JOIN post p ON r.post_id = p.post_id
+        JOIN club c ON p.club_id = c.club_id
+        LEFT JOIN member m ON (p.club_id = m.club_id AND r.author_email = m.user_email)
+        LEFT JOIN users u ON r.author_email = u.user_email    -- ✅ users 테이블 JOIN
+        
+        WHERE r.post_id = #{post_id}
+        ORDER BY 
+            COALESCE(r.parent_comment_id, r.comment_id),
+            r.comment_id ASC 
+    </select>
+    
+    <delete id="deleteByPostId">
+        DELETE FROM reply WHERE post_id = #{post_id}
+    </delete>
+    
+</mapper>

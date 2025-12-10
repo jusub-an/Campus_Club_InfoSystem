@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.PostMapper">
+
+	<select id="getList" resultType="org.zerock.domain.PostVO">
+		select * from post where club_id = #{club_id}
+	</select>
+	
+	<select id="getClubName" resultType="string">
+		select club_name from club where club_id = #{club_id}
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO post (
+	        post_id,
+	        club_id,
+	        author_email,
+	        title,
+	        content,
+	        created_date,
+	        post_type
+	    )
+	    VALUES (
+	        seq_post.nextval,
+	        #{club_id},              -- 세션에서 받는 동아리 ID 자리 (임시로 파라미터)
+	        #{author_email},         -- 세션에서 받는 작성자 이메일 자리 (임시로 파라미터)
+	        #{title},
+	        #{content},
+	        SYSDATE,                 -- Oracle 현재 날짜 자동 입력
+	        #{post_type}             -- 세션에서 받는 게시글 종류 자리 (임시로 파라미터)
+	    )
+	</insert>
+
+	<insert id="insertSelectKey">
+
+		<selectKey keyProperty="post_id" order="BEFORE" resultType="long">
+			select seq_post.nextval from dual
+		</selectKey>
+
+		INSERT INTO post (
+	        post_id,
+	        club_id,
+	        author_email,
+	        title,
+	        content,
+	        created_date,
+	        post_type
+	    )
+	    VALUES (
+	        #{post_id},
+	        #{club_id},              -- 세션에서 받는 동아리 ID 자리 (임시로 파라미터)
+	        #{author_email},         -- 세션에서 받는 작성자 이메일 자리 (임시로 파라미터)
+	        #{title},
+	        #{content},
+	        SYSDATE,                 -- Oracle 현재 날짜 자동 입력
+	        #{post_type}             -- 세션에서 받는 게시글 종류 자리 (임시로 파라미터)
+	    )
+	</insert>
+	
+	<select id="read" resultType="org.zerock.domain.PostVO">
+    	SELECT 
+        	p.post_id,
+        	p.club_id,
+        	p.author_email,
+        	u.name AS author_name,     -- ⭐ 작성자 이름
+        	p.title,
+        	p.content,
+        	p.created_date,
+        	p.post_type,
+        	NVL(r.cnt, 0) AS reply_cnt -- 댓글 수까지 같이 보고 싶으면 (선택)
+    	FROM post p
+    	LEFT JOIN users u
+        	ON p.author_email = u.user_email
+    	LEFT JOIN (
+        	SELECT post_id, COUNT(*) AS cnt
+        	FROM reply
+        	GROUP BY post_id
+    	) r ON p.post_id = r.post_id
+    	WHERE p.post_id = #{post_id}
+	</select>
+	
+	<delete id="delete" >
+    	delete post where post_id = #{post_id}
+	</delete>
+	
+	<update id="update">
+	    update post
+	    set title= #{title},
+	    content=#{content},
+	    post_type = #{post_type}
+	    where post_id = #{post_id}
+	</update>
+        
+        
+    <sql id="criteria">
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="post_type != null and post_type != ''">
+                p.post_type = #{post_type}
+            </if>
+            
+            <if test="club_id != null">
+                AND p.club_id = #{club_id}
+            </if>
+            
+            <if test="type != null and keyword != null and keyword != ''">
+            	AND (
+	                <foreach collection="typeArr" item="type" separator="OR">
+	                    <if test="type == 'T'.toString()">
+	                        p.title LIKE '%' || #{keyword} || '%'
+	                    </if>
+	                    <if test="type == 'C'.toString()">
+	                        p.content LIKE '%' || #{keyword} || '%'
+	                    </if>
+	                    <if test="type == 'A'.toString()">
+	                        EXISTS (
+                            	SELECT 1
+                            	FROM users u
+                            	WHERE u.user_email = p.author_email
+                              		AND u.name LIKE '%' || #{keyword} || '%'
+                        	)
+	                    </if>
+	                </foreach>
+                )
+            </if>
+        </trim>
+    </sql>
+    
+    <select id="getListWithPaging" resultType="org.zerock.domain.PostVO">
+        <![CDATA[
+        SELECT post_id, club_id, author_email, author_name, title, content, created_date, post_type, reply_cnt -- ⭐️ (3) reply_cnt 추가
+        FROM (
+            SELECT a.*, rownum rn
+            FROM (
+                SELECT 
+                    p.post_id, p.club_id, p.author_email,  u.name AS author_name ,p.title, p.content, p.created_date, p.post_type,
+                    NVL(r.cnt, 0) as reply_cnt  
+                FROM post p
+                LEFT JOIN (
+                    SELECT post_id, COUNT(*) as cnt
+                    FROM reply
+                    GROUP BY post_id
+                ) r ON p.post_id = r.post_id 
+                LEFT JOIN users u           -- ✅ 회원 테이블 이름
+                	ON p.author_email = u.user_email  -- ✅ 이메일 FK로 JOIN
+        ]]>
+        
+        <include refid="criteria"></include> <![CDATA[
+                ORDER BY p.created_date DESC -- p. 별칭 사용
+            ) a
+            WHERE rownum <= #{pageNum} * #{amount}
+        )
+        WHERE rn > (#{pageNum} - 1) * #{amount}
+        ]]>
+    </select>
+    
+	<select id="getTotalCount" resultType="int">
+	    SELECT count(*) 
+	    FROM post p  <include refid="criteria"></include>
+	</select>
+</mapper>
